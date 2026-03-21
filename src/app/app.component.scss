@@ -1,78 +1,22 @@
-// :host {
-//   display: block;
-//   width: 100%;
-//   max-width: 120%;
-//   min-height: 100vh;
-//   box-sizing: border-box;
-// }
-
-// .layout {
-//   display: flex;
-//   flex-direction: row;
-//   align-items: stretch;
-//   width: 100%;
-//   max-width: 100%;
-//   min-height: 100vh;
-//   box-sizing: border-box;
-//   background: #e0e0e0;
-// }
-
-// .pane {
-//   display: flex;
-//   flex-direction: column;
-//   min-height: 0;
-//   min-width: 0;
-//   padding: 0;
-//   box-sizing: border-box;
-// }
-
-// .pane--network {
-//   flex: 1 1 0%;
-//   min-width: 0;
-// }
-
-// .pane--detail {
-//   flex: 0 0 clamp(260px, 28vw, 400px);
-//   max-width: 100%;
-//   overflow: auto;
-//   padding: 8px;
-//   background: #fafafa;
-//   border-left: 1px solid #ccc;
-// }
-
-
-// :host {
-//   display: block;
-//   height: 100vh;
-//   width: 100%;
-//   overflow: hidden;
-// }
-
 :host {
   display: flex;
   flex-direction: column;
-  flex: 1 1 auto;
+  flex: 1 1 0%;
   width: 100%;
+  max-width: 100%;
   min-height: 0;
-  height: 100%;
   overflow: hidden;
   box-sizing: border-box;
 }
-
 .layout {
   display: flex;
-  flex: 1 1 auto;
-  flex-direction: row;
-  align-items: stretch;
-  width: 100%;
-  min-height: 0;
+  flex: 1;
   overflow: hidden;
 }
 
 .pane {
   display: flex;
   flex-direction: column;
-  flex: 1;
   min-width: 0;
   min-height: 0;
 }
@@ -80,6 +24,7 @@
 .pane--network {
   flex: 1;
   min-width: 0;
+  width: 0;
 }
 
 .pane--detail {
