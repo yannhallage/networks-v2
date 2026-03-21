@@ -1,0 +1,79 @@
+@import 'tailwindcss';
+
+@source './**/*.{html,ts}';
+
+/* Classes utilisées depuis le TS (barres waterfall) — garantit la génération CSS */
+@source inline('absolute top-1/2 h-2.5 min-w-[2px] -translate-y-1/2 rounded-sm opacity-95 bg-[#1a73e8] bg-[#188038] bg-[#5f6368] bg-[#9334e6] bg-[#9aa0a6] border border-[#d93025]');
+
+@layer base {
+  html {
+    color-scheme: light;
+    height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    min-height: 100dvh;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
+    background-color: #e8e8e8;
+  }
+
+  app-root {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0%;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  app-network-panel,
+  app-request-detail {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0%;
+    align-self: stretch;
+    min-height: 0;
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@layer utilities {
+  .bg-timeline-ruler {
+    background-image: repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent calc(100% / 12 - 1px),
+      #e0e0e0 calc(100% / 12 - 1px),
+      #e0e0e0 calc(100% / 12)
+    );
+  }
+
+  .bg-waterfall-lane {
+    background-image: repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent calc(100% / 12 - 1px),
+      #ececec calc(100% / 12 - 1px),
+      #ececec calc(100% / 12)
+    );
+  }
+}

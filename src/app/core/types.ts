@@ -1,6 +1,8 @@
+export type NetworkResourceType = 'fetch' | 'xhr' | 'script' | 'stylesheet';
+
 export interface NetworkRequest {
   id: string;
-  type: 'fetch' | 'xhr';
+  type: NetworkResourceType;
   url: string;
   method: string;
   status?: number;
@@ -10,6 +12,10 @@ export interface NetworkRequest {
   responseBody?: unknown;
   duration?: number;
   timestamp: number;
+  /** Libellés UI optionnels (démo ou extension) */
+  displayName?: string;
+  displaySize?: string;
+  displayInitiator?: string;
 }
 
 /** Message serveur attendu pour les requêtes réseau capturées */

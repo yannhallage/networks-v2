@@ -1,8 +1,17 @@
-<div class="layout">
-  <div class="pane pane--network">
-    <app-network-panel [requests]="(requests$ | async) ?? []" (rowSelected)="onSelect($event)" />
+<div
+  class="flex min-h-0 flex-1 overflow-hidden bg-[#dcdcdc] p-1.5 shadow-inner sm:p-2"
+>
+  <div
+    class="flex min-h-0 min-w-0 flex-1 basis-0 flex-col overflow-hidden rounded-md border border-neutral-400/50 bg-white shadow-md"
+  >
+    <app-network-panel
+      [requests]="(requests$ | async) ?? []"
+      (rowSelected)="onSelect($event)"
+    />
   </div>
-  <div class="pane pane--detail">
+  <div
+    class="ml-1.5 flex min-h-0 w-[min(100%,20rem)] shrink-0 flex-col overflow-hidden rounded-md border border-neutral-400/50 bg-white shadow-md sm:ml-2"
+  >
     <app-request-detail [request]="selected" />
   </div>
 </div>

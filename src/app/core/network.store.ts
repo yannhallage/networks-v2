@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, map } from 'rxjs';
+import { DEFAULT_NETWORK_REQUESTS } from '../data/default-network.data';
 import type { NetworkRequest } from './types';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkStore {
-  private readonly requestsSubject = new BehaviorSubject<NetworkRequest[]>([]);
+  private readonly requestsSubject = new BehaviorSubject<NetworkRequest[]>(
+    [...DEFAULT_NETWORK_REQUESTS],
+  );
 
   readonly requests$: Observable<NetworkRequest[]> = this.requestsSubject.asObservable();
 

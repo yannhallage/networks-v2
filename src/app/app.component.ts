@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subject, filter, takeUntil } from 'rxjs';
-import { NetworkPanelComponent } from './components/network-panel/network-panel.component';
-import { RequestDetailComponent } from './components/request-detail/request-detail.component';
+import { NetworkPanelComponent } from './features/network/network-panel/network-panel.component';
+import { RequestDetailComponent } from './features/network/request-detail/request-detail.component';
 import { NetworkStore } from './core/network.store';
 import type { NetworkRequest } from './core/types';
 import { WebSocketService } from './core/websocket.service';
@@ -11,7 +11,10 @@ import { WebSocketService } from './core/websocket.service';
   selector: 'app-root',
   imports: [AsyncPipe, NetworkPanelComponent, RequestDetailComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  host: {
+    class:
+      'flex min-h-0 max-w-full flex-1 flex-col overflow-hidden box-border w-full',
+  },
 })
 export class AppComponent implements OnInit, OnDestroy {
   private readonly ws = inject(WebSocketService);

@@ -8,98 +8,20 @@ import {
   computed,
   signal,
 } from '@angular/core';
-import type { NetworkRequest } from '../../core/types';
-
-/** Ligne affichée (données réelles ou démo) */
-export interface NetworkRowView {
-  id: string;
-  name: string;
-  status: string;
-  statusFailed: boolean;
-  type: string;
-  initiator: string;
-  size: string;
-  timeMs: number;
-  /** Début relatif au début de la session (ms) */
-  startMs: number;
-  durationMs: number;
-  barClass: 'fetch' | 'xhr' | 'script' | 'stylesheet' | 'failed';
-}
-
-const MOCK_ROWS: NetworkRowView[] = [
-  {
-    id: '1',
-    name: '9461cfa1-bd84-4c21-908f-2185020eca85',
-    status: '(failed) net::ERR_CONNECTION_REFUSED',
-    statusFailed: true,
-    type: 'fetch',
-    initiator: 'contentScript.js:1',
-    size: '0.0 kB',
-    timeMs: 2070,
-    startMs: 120,
-    durationMs: 2070,
-    barClass: 'failed',
-  },
-  {
-    id: '2',
-    name: 'a12b3c4d-e5f6-7890-abcd-ef1234567890',
-    status: '(failed) net::ERR_CONNECTION_REFUSED',
-    statusFailed: true,
-    type: 'xhr',
-    initiator: 'contentScript.js:1',
-    size: '0.0 kB',
-    timeMs: 1890,
-    startMs: 400,
-    durationMs: 1890,
-    barClass: 'failed',
-  },
-  {
-    id: '3',
-    name: 'main.js',
-    status: '200',
-    statusFailed: false,
-    type: 'script',
-    initiator: 'index.html:12',
-    size: '42.1 kB',
-    timeMs: 45,
-    startMs: 0,
-    durationMs: 45,
-    barClass: 'script',
-  },
-  {
-    id: '4',
-    name: 'styles.css',
-    status: '200',
-    statusFailed: false,
-    type: 'stylesheet',
-    initiator: 'index.html:8',
-    size: '8.4 kB',
-    timeMs: 32,
-    startMs: 5,
-    durationMs: 32,
-    barClass: 'stylesheet',
-  },
-  {
-    id: '5',
-    name: 'api/data',
-    status: '200',
-    statusFailed: false,
-    type: 'fetch',
-    initiator: 'app.js:102',
-    size: '1.2 kB',
-    timeMs: 120,
-    startMs: 200,
-    durationMs: 120,
-    barClass: 'fetch',
-  },
-];
+import { DEFAULT_PAGE_TIMINGS } from '../../../data/default-network.data';
+import type { NetworkRequest } from '../../../core/types';
+import type { NetworkRowView } from '../models/network-row.model';
+import { NetworkChartComponent } from '../network-chart/network-chart.component';
 
 @Component({
   selector: 'app-network-panel',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NetworkChartComponent],
   templateUrl: './network-panel.component.html',
-  styleUrl: './network-panel.component.scss',
+  host: {
+    class:
+      'box-border flex min-h-0 min-w-0 w-full flex-1 flex-col self-stretch',
+  },
 })
 export class NetworkPanelComponent {
   @Input() set requests(value: NetworkRequest[] | null) {
@@ -112,7 +34,9 @@ export class NetworkPanelComponent {
     | { col: 'name' | 'status' | 'type' | 'initiator' | 'size' | 'time'; startX: number }
     | null = null;
 
-  /** Colonnes redimensionnables : largeurs en px */
+  readonly domContentLoadedMs = DEFAULT_PAGE_TIMINGS.domContentLoadedMs;
+  readonly loadEventMs = DEFAULT_PAGE_TIMINGS.loadEventMs;
+
   readonly colWidths = signal({
     name: 280,
     status: 220,
@@ -128,7 +52,7 @@ export class NetworkPanelComponent {
   readonly rows = computed(() => {
     const raw = this.requestsSignal();
     if (raw.length === 0) {
-      return this.sortRows([...MOCK_ROWS]);
+      return [];
     }
     const sessionStart = Math.min(...raw.map((x) => x.timestamp));
     return this.sortRows(raw.map((r) => this.mapRequest(r, sessionStart)));
@@ -143,21 +67,6 @@ export class NetworkPanelComponent {
     }
     return Math.max(max, 1000);
   });
-
-  /** Marqueurs d’axe (1 s, 2 s, …) comme les DevTools */
-  readonly timeTicks = computed(() => {
-    const max = this.timelineMaxMs();
-    const step = max <= 20000 ? 1000 : 5000;
-    const ticks: number[] = [];
-    for (let t = step; t <= max; t += step) {
-      ticks.push(t);
-    }
-    return { max, ticks, step };
-  });
-
-  /** Lignes verticales grille + DOM / Load (démo) */
-  readonly domContentLoadedMs = 978;
-  readonly loadEventMs = 1810;
 
   readonly footerStats = computed(() => {
     const rows = this.rows();
@@ -187,20 +96,6 @@ export class NetworkPanelComponent {
       this.sortKey.set(key);
       this.sortDir.set('asc');
     }
-  }
-
-  barLeftPct(row: NetworkRowView): number {
-    const max = this.timelineMaxMs();
-    return (row.startMs / max) * 100;
-  }
-
-  barWidthPct(row: NetworkRowView): number {
-    const max = this.timelineMaxMs();
-    return Math.max((row.durationMs / max) * 100, 0.35);
-  }
-
-  milestoneLeftPct(ms: number): number {
-    return (ms / this.timelineMaxMs()) * 100;
   }
 
   onColResizeStart(
@@ -243,20 +138,24 @@ export class NetworkPanelComponent {
     const startMs = r.timestamp - sessionStart;
     const durationMs = r.duration ?? 80;
     const failed = r.status == null || r.status === 0;
-    const name = this.shortUrl(r.url);
-    const barClass = failed
+    const name = r.displayName ?? this.shortUrl(r.url);
+    const barClass: NetworkRowView['barClass'] = failed
       ? 'failed'
       : r.type === 'xhr'
         ? 'xhr'
-        : 'fetch';
+        : r.type === 'script'
+          ? 'script'
+          : r.type === 'stylesheet'
+            ? 'stylesheet'
+            : 'fetch';
     return {
       id: r.id,
       name,
       status: failed ? '(failed) net::ERR_CONNECTION_REFUSED' : String(r.status),
       statusFailed: failed,
       type: r.type,
-      initiator: '—',
-      size: '—',
+      initiator: r.displayInitiator ?? '—',
+      size: r.displaySize ?? '—',
       timeMs: durationMs,
       startMs,
       durationMs,
