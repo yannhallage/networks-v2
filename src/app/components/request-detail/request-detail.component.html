@@ -1,0 +1,8 @@
+@if (request) {
+  <h3>Request</h3>
+  <pre>{{ { method: request.method, url: request.url, requestBody: request.requestBody } | json }}</pre>
+  <h3>Response</h3>
+  <pre>{{ { status: request.status, responseBody: request.responseBody } | json }}</pre>
+  <h3>Timing</h3>
+  <pre>{{ { duration: request.duration } | json }}</pre>
+}

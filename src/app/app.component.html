@@ -1,0 +1,8 @@
+<div class="layout">
+  <div class="pane pane--network">
+    <app-network-panel [requests]="(requests$ | async) ?? []" (rowSelected)="onSelect($event)" />
+  </div>
+  <div class="pane pane--detail">
+    <app-request-detail [request]="selected" />
+  </div>
+</div>
