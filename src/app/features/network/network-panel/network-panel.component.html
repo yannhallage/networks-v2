@@ -1,11 +1,13 @@
+<!-- Panneau Network : en-tête, waterfall, tableau des requêtes, barre de stats -->
 <div
   class="box-border flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-[#fafafa] font-sans text-[11px] text-neutral-800 antialiased">
+  <!-- Titre du panneau (style barre d’outils) -->
   <header
     class="flex h-7 shrink-0 items-center border-b border-neutral-300/90 bg-gradient-to-b from-[#f6f6f6] to-[#ececec] px-2 text-[11px] font-semibold text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)]">
     <span class="select-none">Network</span>
   </header>
 
-  <!-- Waterfall Chart.js -->
+  <!-- Graphique waterfall (Chart.js) : masqué si aucune ligne -->
   <div
     class="flex max-h-[min(42vh,22rem)] min-h-[140px] shrink-0 flex-col overflow-hidden border-b border-neutral-300 bg-white">
     @if (rows().length > 0) {
@@ -22,6 +24,7 @@
       [style.--w-init.px]="colWidths().initiator" [style.--w-size.px]="colWidths().size"
       [style.--w-time.px]="colWidths().time">
       <thead>
+        <!-- En-têtes : tri au clic ; poignée à droite pour redimensionner la colonne -->
         <tr class="shadow-[0_1px_0_0_rgba(0,0,0,0.08)]">
           <th
             class="relative sticky top-0 z-10 h-7 w-[var(--w-name,280px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
@@ -86,10 +89,12 @@
         </tr>
       </thead>
       <tbody>
+        <!-- Ligne : clic ouvre le détail ; erreur = pastille rouge + texte rouge -->
         @for (row of rows(); track row.id) {
         <tr
           class="cursor-pointer border-b border-neutral-100 transition-colors hover:bg-blue-50/60 even:bg-neutral-50/90"
           [ngClass]="{ 'text-[#c5221f]': row.statusFailed }" (click)="onRowClick(row)">
+          <!-- Nom + indicateur d’échec -->
           <td
             class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle last:border-r-0">
             @if (row.statusFailed) {
@@ -126,6 +131,7 @@
     </table>
   </div>
 
+  <!-- Résumé : compteurs, transfert, fin de chargement, DCL / Load -->
   <footer
     class="flex shrink-0 flex-wrap items-center gap-y-1 border-t border-neutral-300 bg-gradient-to-b from-[#f4f4f4] to-[#e8e8e8] px-2 py-1.5 text-[11px] text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7)]">
     <span class="tabular-nums">{{ footerStats().shown }} / {{ footerStats().total }} requêtes</span>
