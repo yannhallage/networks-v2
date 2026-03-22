@@ -13,8 +13,10 @@
     }
   </div>
 
-  <!-- Tableau -->
-  <div class="min-h-0 flex-1 overflow-auto bg-white">
+  <!-- Tableau (scroll vertical / horizontal si beaucoup de lignes ou colonnes larges) -->
+  <div
+    class="inspector-scrollbar min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-auto overscroll-contain bg-white [scrollbar-gutter:stable]"
+  >
     <table class="w-full table-fixed border-collapse text-left" [style.--w-name.px]="colWidths().name"
       [style.--w-status.px]="colWidths().status" [style.--w-type.px]="colWidths().type"
       [style.--w-init.px]="colWidths().initiator" [style.--w-size.px]="colWidths().size"
@@ -103,30 +105,8 @@
             {{ row.status }}
           </td>
           <td
-            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle last:border-r-0">
-            @switch (row.type) {
-            @case ('fetch') {
-            <span
-              class="inline-flex max-w-full truncate rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-800 ring-1 ring-inset ring-blue-600/20">fetch</span>
-            }
-            @case ('xhr') {
-            <span
-              class="inline-flex max-w-full truncate rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800 ring-1 ring-inset ring-emerald-600/20">xhr</span>
-            }
-            @case ('script') {
-            <span
-              class="inline-flex max-w-full truncate rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700 ring-1 ring-inset ring-slate-500/25">script</span>
-            }
-            @case ('stylesheet') {
-            <span
-              class="inline-flex max-w-full truncate rounded bg-violet-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-800 ring-1 ring-inset ring-violet-600/20">stylesheet</span>
-            }
-            @default {
-            <span
-              class="inline-flex max-w-full truncate rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-700 ring-1 ring-inset ring-neutral-400/30">{{
-              row.type }}</span>
-            }
-            }
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle text-[11px] last:border-r-0">
+            {{ row.type }}
           </td>
           <td
             class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle text-[11px] text-[#1a73e8] underline decoration-solid underline-offset-2 last:border-r-0">

@@ -20,7 +20,7 @@ import { NetworkChartComponent } from '../network-chart/network-chart.component'
   templateUrl: './network-panel.component.html',
   host: {
     class:
-      'box-border flex min-h-0 min-w-0 w-full flex-1 flex-col self-stretch',
+      'box-border flex min-h-0 min-w-0 w-full flex-1 flex-col self-stretch overflow-hidden',
   },
 })
 export class NetworkPanelComponent {
