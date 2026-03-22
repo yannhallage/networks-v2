@@ -27,6 +27,9 @@
     [style.width.px]="detailPanelWidth()"
     [style.minWidth.px]="200"
   >
-    <app-request-detail [request]="selected" />
+    <app-request-detail
+      [request]="selected"
+      (closePanel)="selected = null"
+    />
   </div>
 </div>

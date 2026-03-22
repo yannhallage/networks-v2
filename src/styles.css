@@ -57,6 +57,45 @@
 }
 
 @layer utilities {
+  /**
+   * Barres de défilement fines, cohérentes Chrome DevTools / panneaux techniques.
+   * WebKit + Firefox (`scrollbar-color` / `scrollbar-width`).
+   */
+  .inspector-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #b0b0b0 #ececec;
+  }
+
+  .inspector-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .inspector-scrollbar::-webkit-scrollbar-track {
+    background: #ececec;
+    border-radius: 5px;
+  }
+
+  .inspector-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #b0b0b0;
+    border-radius: 5px;
+    border: 2px solid #ececec;
+    background-clip: padding-box;
+  }
+
+  .inspector-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: #949494;
+    border-color: #e4e4e4;
+  }
+
+  .inspector-scrollbar::-webkit-scrollbar-thumb:active {
+    background: #888888;
+  }
+
+  .inspector-scrollbar::-webkit-scrollbar-corner {
+    background: #ececec;
+  }
+
   .bg-timeline-ruler {
     background-image: repeating-linear-gradient(
       to right,

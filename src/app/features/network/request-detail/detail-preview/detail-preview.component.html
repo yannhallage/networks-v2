@@ -1,0 +1,9 @@
+@if (parsed() === null) {
+<p class="px-1 py-2 text-[12px] text-neutral-500">Aucun corps de réponse à prévisualiser.</p>
+} @else if (treeRoot() !== null) {
+<app-json-tree-node [value]="treeRoot()!" />
+} @else {
+<pre
+  class="m-0 whitespace-pre-wrap break-all font-mono text-[12px] text-neutral-800"
+>{{ parsed() }}</pre>
+}
