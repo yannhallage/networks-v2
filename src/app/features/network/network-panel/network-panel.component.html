@@ -1,223 +1,156 @@
 <div
-  class="box-border flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-[#fafafa] font-sans text-[11px] text-neutral-800 antialiased"
->
+  class="box-border flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-[#fafafa] font-sans text-[11px] text-neutral-800 antialiased">
   <header
-    class="flex h-7 shrink-0 items-center border-b border-neutral-300/90 bg-gradient-to-b from-[#f6f6f6] to-[#ececec] px-2 text-[11px] font-semibold text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)]"
-  >
+    class="flex h-7 shrink-0 items-center border-b border-neutral-300/90 bg-gradient-to-b from-[#f6f6f6] to-[#ececec] px-2 text-[11px] font-semibold text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)]">
     <span class="select-none">Network</span>
   </header>
 
   <!-- Waterfall Chart.js -->
   <div
-    class="flex max-h-[min(42vh,22rem)] min-h-[140px] shrink-0 flex-col overflow-hidden border-b border-neutral-300 bg-white"
-  >
+    class="flex max-h-[min(42vh,22rem)] min-h-[140px] shrink-0 flex-col overflow-hidden border-b border-neutral-300 bg-white">
     @if (rows().length > 0) {
-      <app-network-chart
-        [rows]="rows()"
-        [maxMs]="timelineMaxMs()"
-        [domContentLoadedMs]="domContentLoadedMs"
-        [loadEventMs]="loadEventMs"
-      />
+    <app-network-chart [rows]="rows()" />
     }
   </div>
 
   <!-- Tableau -->
   <div class="min-h-0 flex-1 overflow-auto bg-white">
-    <table
-      class="w-full table-fixed border-collapse text-left"
-      [style.--w-name.px]="colWidths().name"
-      [style.--w-status.px]="colWidths().status"
-      [style.--w-type.px]="colWidths().type"
-      [style.--w-init.px]="colWidths().initiator"
-      [style.--w-size.px]="colWidths().size"
-      [style.--w-time.px]="colWidths().time"
-    >
+    <table class="w-full table-fixed border-collapse text-left" [style.--w-name.px]="colWidths().name"
+      [style.--w-status.px]="colWidths().status" [style.--w-type.px]="colWidths().type"
+      [style.--w-init.px]="colWidths().initiator" [style.--w-size.px]="colWidths().size"
+      [style.--w-time.px]="colWidths().time">
       <thead>
         <tr class="shadow-[0_1px_0_0_rgba(0,0,0,0.08)]">
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-name,280px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0"
-          >
-            <button
-              type="button"
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-name,280px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
               class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
-              (click)="sortBy('name')"
-            >
+              (click)="sortBy('name')">
               Name
             </button>
-            <span
-              class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
-              (pointerdown)="onColResizeStart($event, 'name')"
-            ></span>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+              (pointerdown)="onColResizeStart($event, 'name')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-status,220px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0"
-          >
-            <button
-              type="button"
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-status,220px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
               class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
-              (click)="sortBy('status')"
-            >
+              (click)="sortBy('status')">
               Status
             </button>
-            <span
-              class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
-              (pointerdown)="onColResizeStart($event, 'status')"
-            ></span>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+              (pointerdown)="onColResizeStart($event, 'status')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-type,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0"
-          >
-            <button
-              type="button"
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-type,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
               class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
-              (click)="sortBy('type')"
-            >
+              (click)="sortBy('type')">
               Type
             </button>
-            <span
-              class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
-              (pointerdown)="onColResizeStart($event, 'type')"
-            ></span>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+              (pointerdown)="onColResizeStart($event, 'type')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-init,160px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0"
-          >
-            <button
-              type="button"
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-init,160px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
               class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
-              (click)="sortBy('initiator')"
-            >
+              (click)="sortBy('initiator')">
               Initiator
             </button>
-            <span
-              class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
-              (pointerdown)="onColResizeStart($event, 'initiator')"
-            ></span>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+              (pointerdown)="onColResizeStart($event, 'initiator')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-size,88px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0"
-          >
-            <button
-              type="button"
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-size,88px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
               class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
-              (click)="sortBy('size')"
-            >
+              (click)="sortBy('size')">
               Size
             </button>
-            <span
-              class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
-              (pointerdown)="onColResizeStart($event, 'size')"
-            ></span>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+              (pointerdown)="onColResizeStart($event, 'size')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-time,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0"
-          >
-            <button
-              type="button"
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-time,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
               class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
-              (click)="sortBy('timeMs')"
-            >
+              (click)="sortBy('timeMs')">
               Time
             </button>
-            <span
-              class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
-              (pointerdown)="onColResizeStart($event, 'time')"
-            ></span>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+              (pointerdown)="onColResizeStart($event, 'time')"></span>
           </th>
         </tr>
       </thead>
       <tbody>
         @for (row of rows(); track row.id) {
-          <tr
-            class="cursor-pointer border-b border-neutral-100 transition-colors hover:bg-blue-50/60 even:bg-neutral-50/90"
-            [ngClass]="{ 'text-[#c5221f]': row.statusFailed }"
-            (click)="onRowClick(row)"
-          >
-            <td
-              class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle last:border-r-0"
-            >
-              @if (row.statusFailed) {
-                <span
-                  class="mr-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-[#c5221f] align-middle shadow-sm"
-                  aria-hidden="true"
-                ></span>
-              }
-              <span class="align-middle font-medium text-neutral-900">{{
-                row.name
+        <tr
+          class="cursor-pointer border-b border-neutral-100 transition-colors hover:bg-blue-50/60 even:bg-neutral-50/90"
+          [ngClass]="{ 'text-[#c5221f]': row.statusFailed }" (click)="onRowClick(row)">
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle last:border-r-0">
+            @if (row.statusFailed) {
+            <span class="mr-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-[#c5221f] align-middle shadow-sm"
+              aria-hidden="true"></span>
+            }
+            <span class="align-middle font-medium text-neutral-900">{{
+              row.name
               }}</span>
-            </td>
-            <td
-              class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle text-[11px] last:border-r-0"
-            >
-              {{ row.status }}
-            </td>
-            <td
-              class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle last:border-r-0"
-            >
-              @switch (row.type) {
-                @case ('fetch') {
-                  <span
-                    class="inline-flex max-w-full truncate rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-800 ring-1 ring-inset ring-blue-600/20"
-                    >fetch</span
-                  >
-                }
-                @case ('xhr') {
-                  <span
-                    class="inline-flex max-w-full truncate rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800 ring-1 ring-inset ring-emerald-600/20"
-                    >xhr</span
-                  >
-                }
-                @case ('script') {
-                  <span
-                    class="inline-flex max-w-full truncate rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700 ring-1 ring-inset ring-slate-500/25"
-                    >script</span
-                  >
-                }
-                @case ('stylesheet') {
-                  <span
-                    class="inline-flex max-w-full truncate rounded bg-violet-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-800 ring-1 ring-inset ring-violet-600/20"
-                    >stylesheet</span
-                  >
-                }
-                @default {
-                  <span
-                    class="inline-flex max-w-full truncate rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-700 ring-1 ring-inset ring-neutral-400/30"
-                    >{{ row.type }}</span
-                  >
-                }
-              }
-            </td>
-            <td
-              class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle text-[11px] text-[#1a73e8] underline decoration-solid underline-offset-2 last:border-r-0"
-            >
-              {{ row.initiator }}
-            </td>
-            <td
-              class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800 last:border-r-0"
-            >
-              {{ row.size }}
-            </td>
-            <td
-              class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800 last:border-r-0"
-            >
-              {{ (row.timeMs / 1000) | number: '1.2-2' }} s
-            </td>
-          </tr>
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle text-[11px] last:border-r-0">
+            {{ row.status }}
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle last:border-r-0">
+            @switch (row.type) {
+            @case ('fetch') {
+            <span
+              class="inline-flex max-w-full truncate rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-800 ring-1 ring-inset ring-blue-600/20">fetch</span>
+            }
+            @case ('xhr') {
+            <span
+              class="inline-flex max-w-full truncate rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800 ring-1 ring-inset ring-emerald-600/20">xhr</span>
+            }
+            @case ('script') {
+            <span
+              class="inline-flex max-w-full truncate rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-700 ring-1 ring-inset ring-slate-500/25">script</span>
+            }
+            @case ('stylesheet') {
+            <span
+              class="inline-flex max-w-full truncate rounded bg-violet-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-violet-800 ring-1 ring-inset ring-violet-600/20">stylesheet</span>
+            }
+            @default {
+            <span
+              class="inline-flex max-w-full truncate rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-700 ring-1 ring-inset ring-neutral-400/30">{{
+              row.type }}</span>
+            }
+            }
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle text-[11px] text-[#1a73e8] underline decoration-solid underline-offset-2 last:border-r-0">
+            {{ row.initiator }}
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800 last:border-r-0">
+            {{ row.size }}
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800 last:border-r-0">
+            {{ (row.timeMs / 1000) | number: '1.2-2' }} s
+          </td>
+        </tr>
         }
       </tbody>
     </table>
   </div>
 
   <footer
-    class="flex shrink-0 flex-wrap items-center gap-y-1 border-t border-neutral-300 bg-gradient-to-b from-[#f4f4f4] to-[#e8e8e8] px-2 py-1.5 text-[11px] text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7)]"
-  >
-    <span class="tabular-nums"
-      >{{ footerStats().shown }} / {{ footerStats().total }} requêtes</span
-    >
+    class="flex shrink-0 flex-wrap items-center gap-y-1 border-t border-neutral-300 bg-gradient-to-b from-[#f4f4f4] to-[#e8e8e8] px-2 py-1.5 text-[11px] text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7)]">
+    <span class="tabular-nums">{{ footerStats().shown }} / {{ footerStats().total }} requêtes</span>
     <span class="mx-1.5 text-neutral-400">|</span>
-    <span class="tabular-nums"
-      >{{ footerStats().transferredKb }} kB transférés</span
-    >
+    <span class="tabular-nums">{{ footerStats().transferredKb }} kB transférés</span>
     <span class="mx-1.5 text-neutral-400">/</span>
     <span class="tabular-nums">{{ footerStats().resourcesKb }} kB ressources</span>
     <span class="mx-1.5 text-neutral-400">|</span>

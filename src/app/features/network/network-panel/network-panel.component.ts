@@ -58,16 +58,6 @@ export class NetworkPanelComponent {
     return this.sortRows(raw.map((r) => this.mapRequest(r, sessionStart)));
   });
 
-  readonly timelineMaxMs = computed(() => {
-    const rows = this.rows();
-    let max = 12000;
-    for (const r of rows) {
-      const end = r.startMs + r.durationMs;
-      if (end > max) max = Math.ceil(end / 1000) * 1000;
-    }
-    return Math.max(max, 1000);
-  });
-
   readonly footerStats = computed(() => {
     const rows = this.rows();
     const totalKb = rows.reduce((acc, r) => acc + this.parseSizeKb(r.size), 0);
@@ -158,6 +148,7 @@ export class NetworkPanelComponent {
       size: r.displaySize ?? '—',
       timeMs: durationMs,
       startMs,
+      capturedAtMs: r.timestamp,
       durationMs,
       barClass,
     };
