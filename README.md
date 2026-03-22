@@ -1,4 +1,6 @@
-# ApiInspector
+# Api-Inspector
+
+![Aperçu de l’interface : panneau Réseau (graphique, liste des requêtes) et détail de la réponse JSON](docs/screenshot.png)
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.22.
 
