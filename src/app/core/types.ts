@@ -12,6 +12,18 @@ export interface NetworkRequest {
   responseBody?: unknown;
   duration?: number;
   timestamp: number;
+  timings?: {
+    blockedMs?: number;
+    dnsMs?: number;
+    connectMs?: number;
+    sslMs?: number;
+    ttfbMs?: number;
+    downloadMs?: number;
+  };
+  transferSizeBytes?: number;
+  resourceSizeBytes?: number;
+  mimeType?: string;
+  errorText?: string;
   /** Libellés UI optionnels (démo ou extension) */
   displayName?: string;
   displaySize?: string;

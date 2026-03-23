@@ -5,6 +5,28 @@
   <header
     class="flex h-7 shrink-0 items-center border-b border-neutral-300/90 bg-gradient-to-b from-[#f8f9fb] to-[#ebedf0] px-2 text-[11px] font-semibold text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.92)]">
     <span class="select-none">Network</span>
+    <button
+      type="button"
+      class="ml-2 rounded border border-neutral-300 bg-white px-2 py-[1px] text-[10px] font-medium text-neutral-700 hover:bg-neutral-50"
+      (click)="exportSession()"
+    >
+      Export JSON
+    </button>
+    <label
+      class="rounded border border-neutral-300 bg-white px-2 py-[1px] text-[10px] font-medium text-neutral-700 hover:bg-neutral-50 cursor-pointer"
+    >
+      Import JSON/HAR
+      <input type="file" class="hidden" accept=".json,.har,application/json" (change)="onImportSessionFile($event)" />
+    </label>
+    <button
+      type="button"
+      class="rounded border px-2 py-[1px] text-[10px] font-medium"
+      [ngClass]="canCompare() ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-neutral-300 bg-white text-neutral-400'"
+      [disabled]="!canCompare()"
+      (click)="emitCompareSelection()"
+    >
+      Comparer (2)
+    </button>
     <div class="ml-auto flex items-center gap-1">
       <button
         type="button"
@@ -73,6 +95,10 @@
         <!-- En-têtes : tri au clic ; poignée à droite pour redimensionner la colonne -->
         <tr class="shadow-[0_1px_0_0_rgba(0,0,0,0.08)]">
           <th
+            class="sticky top-0 z-10 h-7 w-[28px] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 text-center text-[10px] font-bold uppercase tracking-wider text-neutral-600">
+            C
+          </th>
+          <th
             class="relative sticky top-0 z-10 h-7 w-[var(--w-name,280px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
             <button type="button"
               class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
@@ -132,6 +158,10 @@
             <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
               (pointerdown)="onColResizeStart($event, 'time')"></span>
           </th>
+          <th
+            class="sticky top-0 z-10 h-7 min-w-[180px] select-none border-b border-neutral-300 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] px-2 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600">
+            Waterfall
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -140,6 +170,14 @@
         <tr
           class="cursor-pointer border-b border-neutral-100/90 transition-colors hover:bg-blue-50/60 even:bg-[#fafbfc]"
           [ngClass]="{ 'text-[#c5221f]': row.statusFailed }" (click)="onRowClick(row)">
+          <td class="border-r border-neutral-100/90 px-1 text-center align-middle">
+            <input
+              type="checkbox"
+              [checked]="isSelectedForCompare(row)"
+              (click)="$event.stopPropagation()"
+              (change)="toggleCompareSelection(row)"
+            />
+          </td>
           <!-- Nom + indicateur d’échec -->
           <td
             class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle last:border-r-0">
@@ -150,6 +188,9 @@
             <span class="align-middle font-medium text-neutral-900/95">{{
               row.name
               }}</span>
+            @if (row.alertFlags.error || row.alertFlags.slow || row.alertFlags.large) {
+            <span class="ml-1 rounded bg-amber-100 px-1 py-[1px] text-[9px] font-semibold text-amber-700">ALERT</span>
+            }
           </td>
           <td
             class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle text-[11px] last:border-r-0">
@@ -171,6 +212,13 @@
             class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800/95 last:border-r-0">
             {{ (row.timeMs / 1000) | number: '1.2-2' }} s
           </td>
+          <td class="min-w-[180px] border-b border-neutral-100/90 px-2 py-[5px] align-middle">
+            <div class="flex h-2 w-full overflow-hidden rounded bg-neutral-100">
+              @for (segment of row.timelineSegments; track segment.key) {
+              <span class="h-full" [ngClass]="segment.className" [ngStyle]="timelineSegmentStyle(segment, row)"></span>
+              }
+            </div>
+          </td>
         </tr>
         }
       </tbody>
@@ -187,6 +235,8 @@
     <span class="tabular-nums">{{ footerStats().resourcesKb }} kB ressources</span>
     <span class="mx-1.5 text-neutral-400">|</span>
     <span class="tabular-nums">Terminé : {{ footerStats().finishMs }} s</span>
+    <span class="mx-1.5 text-neutral-400">|</span>
+    <span class="tabular-nums">Alertes : {{ footerStats().alerts }}</span>
     <span class="mx-1.5 text-neutral-400">|</span>
     <span>
       <span class="font-semibold text-[#1a73e8]">DOMContentLoaded</span>

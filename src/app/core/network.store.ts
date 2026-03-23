@@ -16,6 +16,10 @@ export class NetworkStore {
     this.requestsSubject.next(next);
   }
 
+  setRequests(requests: NetworkRequest[]): void {
+    this.requestsSubject.next([...requests]);
+  }
+
   selectRequestById(id: string): Observable<NetworkRequest | undefined> {
     return this.requests$.pipe(map((list) => list.find((r) => r.id === id)));
   }

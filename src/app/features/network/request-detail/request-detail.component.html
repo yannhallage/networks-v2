@@ -16,6 +16,7 @@
       ×
     </button>
     @for (tab of tabs; track tab.id) {
+    @if (tab.id !== 'compare' || comparison()) {
     <button
       type="button"
       role="tab"
@@ -27,6 +28,13 @@
       {{ tab.label }}
     </button>
     }
+    }
+    <div class="ml-auto flex items-center gap-1 pb-0.5">
+      <button type="button" class="rounded border border-neutral-300 px-1.5 py-[1px] text-[10px] hover:bg-neutral-50" (click)="copyUrl()">Copier URL</button>
+      <button type="button" class="rounded border border-neutral-300 px-1.5 py-[1px] text-[10px] hover:bg-neutral-50" (click)="copyCurl()">Copier cURL</button>
+      <button type="button" class="rounded border border-neutral-300 px-1.5 py-[1px] text-[10px] hover:bg-neutral-50" (click)="replayRequest()">Rejouer</button>
+      <button type="button" class="rounded border border-neutral-300 px-1.5 py-[1px] text-[10px] hover:bg-neutral-50" (click)="openInNewTab()">Ouvrir</button>
+    </div>
   </div>
   <div
     class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
@@ -39,6 +47,11 @@
     <app-detail-preview [request]="req" />
     } @case ('response') {
     <app-detail-response [request]="req" />
+    } @case ('compare') { @if (comparison(); as pair) {
+    <app-detail-compare [pair]="pair" />
+    } @else {
+    <div class="p-3 text-neutral-500">Sélectionnez 2 requêtes dans le tableau puis cliquez sur Comparer.</div>
+    }
     } }
   </div>
 </div>

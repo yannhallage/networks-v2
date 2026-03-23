@@ -30,6 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   readonly requests$ = this.store.requests$;
   selected: NetworkRequest | null = null;
+  comparePair: [NetworkRequest, NetworkRequest] | null = null;
 
   /** Largeur du panneau détails (px), redimensionnable par glisser la poignée. */
   readonly detailPanelWidth = signal(320);
@@ -56,6 +57,22 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onSelect(req: NetworkRequest): void {
     this.selected = req;
+  }
+
+  onCompare(pair: [NetworkRequest, NetworkRequest]): void {
+    this.comparePair = pair;
+    this.selected = pair[0];
+  }
+
+  onSessionImported(requests: NetworkRequest[]): void {
+    this.store.setRequests(requests);
+    this.selected = null;
+    this.comparePair = null;
+  }
+
+  onReplayCaptured(request: NetworkRequest): void {
+    this.store.addRequest(request);
+    this.selected = request;
   }
 
   onDetailResizeStart(ev: PointerEvent): void {

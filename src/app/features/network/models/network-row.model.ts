@@ -14,4 +14,6 @@ export interface NetworkRowView {
   capturedAtMs: number;
   durationMs: number;
   barClass: 'fetch' | 'xhr' | 'script' | 'stylesheet' | 'failed';
+  timelineSegments: { key: string; ms: number; className: string }[];
+  alertFlags: { slow: boolean; error: boolean; large: boolean };
 }

@@ -1,15 +1,16 @@
 import { Component, effect, input, output, signal } from '@angular/core';
 import type { NetworkRequest } from '../../../core/types';
+import { DetailCompareComponent } from './detail-compare/detail-compare.component';
 import { DetailHeadersComponent } from './detail-headers/detail-headers.component';
 import { DetailPreviewComponent } from './detail-preview/detail-preview.component';
 import { DetailResponseComponent } from './detail-response/detail-response.component';
 
-export type RequestDetailTab = 'headers' | 'preview' | 'response';
+export type RequestDetailTab = 'headers' | 'preview' | 'response' | 'compare';
 
 @Component({
   selector: 'app-request-detail',
   standalone: true,
-  imports: [DetailHeadersComponent, DetailPreviewComponent, DetailResponseComponent],
+  imports: [DetailHeadersComponent, DetailPreviewComponent, DetailResponseComponent, DetailCompareComponent],
   templateUrl: './request-detail.component.html',
   styles: [
     `
@@ -43,7 +44,9 @@ export type RequestDetailTab = 'headers' | 'preview' | 'response';
 })
 export class RequestDetailComponent {
   readonly request = input<NetworkRequest | null>(null);
+  readonly comparison = input<[NetworkRequest, NetworkRequest] | null>(null);
   readonly closePanel = output<void>();
+  readonly replayCaptured = output<NetworkRequest>();
 
   readonly activeTab = signal<RequestDetailTab>('headers');
 
@@ -51,6 +54,7 @@ export class RequestDetailComponent {
     { id: 'headers', label: 'Headers' },
     { id: 'preview', label: 'Preview' },
     { id: 'response', label: 'Response' },
+    { id: 'compare', label: 'Compare' },
   ];
 
   constructor() {
@@ -67,5 +71,93 @@ export class RequestDetailComponent {
 
   onClose(): void {
     this.closePanel.emit();
+  }
+
+  async copyUrl(): Promise<void> {
+    const url = this.request()?.url;
+    if (!url || typeof navigator === 'undefined' || !navigator.clipboard) return;
+    await navigator.clipboard.writeText(url);
+  }
+
+  async copyCurl(): Promise<void> {
+    const req = this.request();
+    if (!req || typeof navigator === 'undefined' || !navigator.clipboard) return;
+    const curl = this.toCurl(req);
+    await navigator.clipboard.writeText(curl);
+  }
+
+  openInNewTab(): void {
+    const url = this.request()?.url;
+    if (!url || typeof window === 'undefined') return;
+    window.open(url, '_blank', 'noopener');
+  }
+
+  async replayRequest(): Promise<void> {
+    const req = this.request();
+    if (!req) return;
+    const startedAt = Date.now();
+    try {
+      const response = await fetch(req.url, {
+        method: req.method,
+        headers: req.requestHeaders,
+        body: this.requestBodyToText(req.requestBody),
+      });
+      const text = await response.text();
+      const responseBody = this.tryParseJson(text);
+      const responseHeaders = Object.fromEntries(response.headers.entries());
+      this.replayCaptured.emit({
+        ...req,
+        id: `replay-${Date.now()}`,
+        timestamp: startedAt,
+        status: response.status,
+        duration: Date.now() - startedAt,
+        responseHeaders,
+        responseBody,
+      });
+    } catch (err) {
+      this.replayCaptured.emit({
+        ...req,
+        id: `replay-${Date.now()}`,
+        timestamp: startedAt,
+        status: 0,
+        duration: Date.now() - startedAt,
+        errorText: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  private requestBodyToText(body: unknown): string | undefined {
+    if (body == null) return undefined;
+    if (typeof body === 'string') return body;
+    try {
+      return JSON.stringify(body);
+    } catch {
+      return String(body);
+    }
+  }
+
+  private tryParseJson(value: string): unknown {
+    try {
+      return JSON.parse(value) as unknown;
+    } catch {
+      return value;
+    }
+  }
+
+  private toCurl(req: NetworkRequest): string {
+    const parts = [`curl -X ${this.escapeShell(req.method)} ${this.escapeShell(req.url)}`];
+    const headers = req.requestHeaders ?? {};
+    for (const [k, v] of Object.entries(headers)) {
+      parts.push(`-H ${this.escapeShell(`${k}: ${v}`)}`);
+    }
+    const body = this.requestBodyToText(req.requestBody);
+    if (body) {
+      parts.push(`--data-raw ${this.escapeShell(body)}`);
+    }
+    return parts.join(' ');
+  }
+
+  private escapeShell(value: string): string {
+    return `'${value.replace(/'/g, `'\\''`)}'`;
   }
 }

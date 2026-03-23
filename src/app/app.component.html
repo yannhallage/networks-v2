@@ -7,6 +7,8 @@
     <app-network-panel
       [requests]="(requests$ | async) ?? []"
       (rowSelected)="onSelect($event)"
+      (compareRequested)="onCompare($event)"
+      (sessionImported)="onSessionImported($event)"
     />
   </div>
   <div
@@ -29,7 +31,9 @@
   >
     <app-request-detail
       [request]="selected"
+      [comparison]="comparePair"
       (closePanel)="selected = null"
+      (replayCaptured)="onReplayCaptured($event)"
     />
   </div>
 </div>
