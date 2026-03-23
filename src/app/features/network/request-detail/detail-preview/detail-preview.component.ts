@@ -8,7 +8,7 @@ import { JsonTreeNodeComponent } from './json-tree-node.component';
   imports: [JsonTreeNodeComponent],
   templateUrl: './detail-preview.component.html',
   host: {
-    class: 'inspector-scrollbar block min-h-0 flex-1 overflow-auto bg-white px-2 py-2',
+    class: 'rd-pane rd-preview inspector-scrollbar block min-h-0 flex-1 overflow-auto px-2 py-2',
   },
 })
 export class DetailPreviewComponent {

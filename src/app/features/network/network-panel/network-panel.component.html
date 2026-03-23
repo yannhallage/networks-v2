@@ -1,19 +1,25 @@
 <!-- Panneau Network : en-tête, waterfall, tableau des requêtes, barre de stats -->
 <div
-  class="box-border flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-[#f7f8fa] font-sans text-[11px] text-neutral-800 antialiased">
+  class="np-root box-border flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-[#f7f8fa] font-sans text-[11px] text-neutral-800 antialiased">
   <!-- Titre du panneau (style barre d’outils) -->
   <header
-    class="flex h-7 shrink-0 items-center border-b border-neutral-300/90 bg-gradient-to-b from-[#f8f9fb] to-[#ebedf0] px-2 text-[11px] font-semibold text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.92)]">
+    class="np-toolbar flex h-7 shrink-0 items-center border-b px-2 text-[11px] font-semibold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.92)]"
+    [ngClass]="resolvedTheme() === 'dark'
+      ? 'border-slate-700/80 bg-gradient-to-b from-slate-900 to-slate-950 text-slate-200 shadow-none'
+      : 'border-neutral-300/90 bg-gradient-to-b from-[#f8f9fb] to-[#ebedf0] text-neutral-700'"
+  >
     <span class="select-none">Network</span>
     <button
       type="button"
-      class="ml-2 rounded border border-neutral-300 bg-white px-2 py-[1px] text-[10px] font-medium text-neutral-700 hover:bg-neutral-50"
+      class="ml-2 rounded border px-2 py-[1px] text-[10px] font-medium"
+      [ngClass]="resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
       (click)="exportSession()"
     >
       Export JSON
     </button>
     <label
-      class="rounded border border-neutral-300 bg-white px-2 py-[1px] text-[10px] font-medium text-neutral-700 hover:bg-neutral-50 cursor-pointer"
+      class="cursor-pointer rounded border px-2 py-[1px] text-[10px] font-medium"
+      [ngClass]="resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
     >
       Import JSON/HAR
       <input type="file" class="hidden" accept=".json,.har,application/json" (change)="onImportSessionFile($event)" />
@@ -21,7 +27,9 @@
     <button
       type="button"
       class="rounded border px-2 py-[1px] text-[10px] font-medium"
-      [ngClass]="canCompare() ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-neutral-300 bg-white text-neutral-400'"
+      [ngClass]="canCompare()
+        ? (resolvedTheme() === 'dark' ? 'border-blue-400 bg-blue-950/60 text-blue-200' : 'border-blue-500 bg-blue-50 text-blue-700')
+        : (resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-500' : 'border-neutral-300 bg-white text-neutral-400')"
       [disabled]="!canCompare()"
       (click)="emitCompareSelection()"
     >
@@ -33,7 +41,9 @@
         title="Mode clair"
         aria-label="Mode clair"
         [attr.aria-pressed]="isThemePreference('light')"
-        [ngClass]="isThemePreference('light') ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
+        [ngClass]="isThemePreference('light')
+          ? (resolvedTheme() === 'dark' ? 'border-blue-400 bg-blue-950/60 text-blue-200' : 'border-blue-500 bg-blue-50 text-blue-700')
+          : (resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-200 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50')"
         class="rounded border cursor-pointer px-1.5 py-[1px] text-[10px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
         (click)="setThemePreference('light')"
       >
@@ -48,7 +58,9 @@
         title="Mode sombre"
         aria-label="Mode sombre"
         [attr.aria-pressed]="isThemePreference('dark')"
-        [ngClass]="isThemePreference('dark') ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-neutral-400 bg-neutral-800 text-neutral-100 hover:bg-neutral-700'"
+        [ngClass]="isThemePreference('dark')
+          ? (resolvedTheme() === 'dark' ? 'border-blue-400 bg-blue-950/60 text-blue-200' : 'border-blue-500 bg-blue-50 text-blue-700')
+          : (resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-400 bg-neutral-800 text-neutral-100 hover:bg-neutral-700')"
         class="rounded border cursor-pointer px-1.5 py-[1px] text-[10px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
         (click)="setThemePreference('dark')"
       >
@@ -62,7 +74,9 @@
         title="Mode automatique"
         aria-label="Mode automatique"
         [attr.aria-pressed]="isThemePreference('auto')"
-        [ngClass]="isThemePreference('auto') ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
+        [ngClass]="isThemePreference('auto')
+          ? (resolvedTheme() === 'dark' ? 'border-blue-400 bg-blue-950/60 text-blue-200' : 'border-blue-500 bg-blue-50 text-blue-700')
+          : (resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-200 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50')"
         class="rounded border cursor-pointer px-1.5 py-[1px] text-[10px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
         (click)="setThemePreference('auto')"
       >
@@ -77,7 +91,7 @@
 
   <!-- Graphique waterfall (Chart.js) : masqué si aucune ligne -->
   <div
-    class="flex max-h-[min(42vh,22rem)] min-h-[140px] shrink-0 flex-col overflow-hidden border-b border-neutral-300/90 bg-white">
+    class="np-chart-shell flex max-h-[min(42vh,22rem)] min-h-[140px] shrink-0 flex-col overflow-hidden border-b border-neutral-300/90 bg-white">
     @if (rows().length > 0) {
     <app-network-chart [rows]="rows()" />
     }
@@ -85,15 +99,15 @@
 
   <!-- Tableau (scroll vertical / horizontal si beaucoup de lignes ou colonnes larges) -->
   <div
-    class="inspector-scrollbar min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-auto overscroll-contain bg-white [scrollbar-gutter:stable]"
+    class="np-table-wrap inspector-scrollbar min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-auto overscroll-contain bg-white [scrollbar-gutter:stable]"
   >
-    <table class="w-full table-fixed border-collapse text-left" [style.--w-name.px]="colWidths().name"
+    <table class="np-table w-full table-fixed border-collapse text-left" [style.--w-name.px]="colWidths().name"
       [style.--w-status.px]="colWidths().status" [style.--w-type.px]="colWidths().type"
       [style.--w-init.px]="colWidths().initiator" [style.--w-size.px]="colWidths().size"
       [style.--w-time.px]="colWidths().time">
       <thead>
         <!-- En-têtes : tri au clic ; poignée à droite pour redimensionner la colonne -->
-        <tr class="shadow-[0_1px_0_0_rgba(0,0,0,0.08)]">
+        <tr class="np-head-row shadow-[0_1px_0_0_rgba(0,0,0,0.08)]">
           <th
             class="sticky top-0 z-10 h-7 w-[28px] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 text-center text-[10px] font-bold uppercase tracking-wider text-neutral-600">
             C
@@ -158,18 +172,14 @@
             <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
               (pointerdown)="onColResizeStart($event, 'time')"></span>
           </th>
-          <th
-            class="sticky top-0 z-10 h-7 min-w-[180px] select-none border-b border-neutral-300 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] px-2 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600">
-            Waterfall
-          </th>
         </tr>
       </thead>
       <tbody>
         <!-- Ligne : clic ouvre le détail ; erreur = pastille rouge + texte rouge -->
         @for (row of rows(); track row.id) {
         <tr
-          class="cursor-pointer border-b border-neutral-100/90 transition-colors hover:bg-blue-50/60 even:bg-[#fafbfc]"
-          [ngClass]="{ 'text-[#c5221f]': row.statusFailed }" (click)="onRowClick(row)">
+          class="np-data-row cursor-pointer border-b border-neutral-100/90 transition-colors hover:bg-blue-50/60 even:bg-[#fafbfc]"
+          (click)="onRowClick(row)">
           <td class="border-r border-neutral-100/90 px-1 text-center align-middle">
             <input
               type="checkbox"
@@ -181,20 +191,24 @@
           <!-- Nom + indicateur d’échec -->
           <td
             class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle last:border-r-0">
-            @if (row.statusFailed) {
+            <!-- @if (row.statusFailed) {
             <span class="mr-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-[#c5221f] align-middle shadow-sm"
               aria-hidden="true"></span>
-            }
+            } -->
             <span class="align-middle font-medium text-neutral-900/95">{{
               row.name
               }}</span>
-            @if (row.alertFlags.error || row.alertFlags.slow || row.alertFlags.large) {
+            <!-- @if (row.alertFlags.error || row.alertFlags.slow || row.alertFlags.large) {
             <span class="ml-1 rounded bg-amber-100 px-1 py-[1px] text-[9px] font-semibold text-amber-700">ALERT</span>
-            }
+            } -->
           </td>
           <td
             class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle text-[11px] last:border-r-0">
+            <span [ngClass]="row.alertFlags.error
+              ? (resolvedTheme() === 'dark' ? 'font-semibold text-red-300' : 'font-semibold text-[#c5221f]')
+              : ''">
             {{ row.status }}
+            </span>
           </td>
           <td
             class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle text-[11px] text-neutral-700 last:border-r-0">
@@ -212,13 +226,6 @@
             class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800/95 last:border-r-0">
             {{ (row.timeMs / 1000) | number: '1.2-2' }} s
           </td>
-          <td class="min-w-[180px] border-b border-neutral-100/90 px-2 py-[5px] align-middle">
-            <div class="flex h-2 w-full overflow-hidden rounded bg-neutral-100">
-              @for (segment of row.timelineSegments; track segment.key) {
-              <span class="h-full" [ngClass]="segment.className" [ngStyle]="timelineSegmentStyle(segment, row)"></span>
-              }
-            </div>
-          </td>
         </tr>
         }
       </tbody>
@@ -227,22 +234,26 @@
 
   <!-- Résumé : compteurs, transfert, fin de chargement, DCL / Load -->
   <footer
-    class="flex shrink-0 flex-wrap items-center gap-y-1 border-t border-neutral-300/90 bg-gradient-to-b from-[#f4f6f8] to-[#e7eaee] px-2 py-1.5 text-[11px] text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75)]">
+    class="np-footer flex shrink-0 flex-wrap items-center gap-y-1 border-t px-2 py-1.5 text-[11px] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75)]"
+    [ngClass]="resolvedTheme() === 'dark'
+      ? 'border-slate-700/80 bg-gradient-to-b from-slate-900 to-slate-950 text-slate-300 shadow-none'
+      : 'border-neutral-300/90 bg-gradient-to-b from-[#f4f6f8] to-[#e7eaee] text-neutral-700'"
+  >
     <span class="tabular-nums">{{ footerStats().shown }} / {{ footerStats().total }} requêtes</span>
-    <span class="mx-1.5 text-neutral-400">|</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
     <span class="tabular-nums">{{ footerStats().transferredKb }} kB transférés</span>
-    <span class="mx-1.5 text-neutral-400">/</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">/</span>
     <span class="tabular-nums">{{ footerStats().resourcesKb }} kB ressources</span>
-    <span class="mx-1.5 text-neutral-400">|</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
     <span class="tabular-nums">Terminé : {{ footerStats().finishMs }} s</span>
-    <span class="mx-1.5 text-neutral-400">|</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
     <span class="tabular-nums">Alertes : {{ footerStats().alerts }}</span>
-    <span class="mx-1.5 text-neutral-400">|</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
     <span>
       <span class="font-semibold text-[#1a73e8]">DOMContentLoaded</span>
       : {{ domContentLoadedMs }} ms
     </span>
-    <span class="mx-1.5 text-neutral-400">|</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
     <span>
       <span class="font-semibold text-[#d93025]">Load</span>
       : {{ loadEventSeconds() }} s

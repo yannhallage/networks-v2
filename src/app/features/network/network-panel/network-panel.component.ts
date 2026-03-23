@@ -8,8 +8,11 @@ import {
   OnInit,
   Output,
   computed,
+  effect,
+  inject,
   signal,
 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { DEFAULT_PAGE_TIMINGS } from '../../../data/default-network.data';
 import type { NetworkRequest } from '../../../core/types';
 import type { NetworkRowView } from '../models/network-row.model';
@@ -34,6 +37,7 @@ export class NetworkPanelComponent implements OnInit, OnDestroy {
   @Output() rowSelected = new EventEmitter<NetworkRequest>();
   @Output() compareRequested = new EventEmitter<[NetworkRequest, NetworkRequest]>();
   @Output() sessionImported = new EventEmitter<NetworkRequest[]>();
+  private readonly documentRef = inject(DOCUMENT);
 
   private readonly requestsSignal = signal<NetworkRequest[]>([]);
   private colResize:
@@ -70,6 +74,18 @@ export class NetworkPanelComponent implements OnInit, OnDestroy {
   private readonly largeThresholdBytes = 512 * 1024;
   private mediaQuery: MediaQueryList | null = null;
   private mediaQueryListener: ((event: MediaQueryListEvent) => void) | null = null;
+
+  constructor() {
+    effect(() => {
+      const theme = this.resolvedTheme();
+      const root = this.documentRef?.documentElement;
+      if (!root) {
+        return;
+      }
+      root.setAttribute('data-theme', theme);
+      root.style.colorScheme = theme;
+    });
+  }
 
   readonly rows = computed(() => {
     const raw = this.requestsSignal();

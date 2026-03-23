@@ -10,7 +10,7 @@ type DiffState = 'same' | 'changed' | 'only-left' | 'only-right';
   imports: [CommonModule],
   templateUrl: './detail-compare.component.html',
   host: {
-    class: 'inspector-scrollbar block min-h-0 flex-1 overflow-auto bg-white px-2 py-2 text-[11px]',
+    class: 'rd-pane rd-compare inspector-scrollbar block min-h-0 flex-1 overflow-auto px-2 py-2 text-[11px]',
   },
 })
 export class DetailCompareComponent {

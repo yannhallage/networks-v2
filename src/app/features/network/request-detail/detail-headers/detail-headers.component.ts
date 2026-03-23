@@ -7,7 +7,7 @@ import type { NetworkRequest } from '../../../../core/types';
   templateUrl: './detail-headers.component.html',
   host: {
     class:
-      'inspector-scrollbar block min-h-0 flex-1 overflow-auto bg-white font-sans text-[11px] text-neutral-800 antialiased',
+      'rd-pane rd-headers inspector-scrollbar block min-h-0 flex-1 overflow-auto font-sans text-[11px] text-neutral-800 antialiased',
   },
 })
 export class DetailHeadersComponent {

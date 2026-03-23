@@ -1,5 +1,5 @@
-<div class="min-h-0 flex-1 overflow-auto p-2">
-  <table mat-table [dataSource]="requests" class="w-full">
+<div class="rl-wrap min-h-0 flex-1 overflow-auto p-2">
+  <table mat-table [dataSource]="requests" class="rl-table w-full">
     <ng-container matColumnDef="method">
       <th mat-header-cell *matHeaderCellDef class="!font-semibold">METHOD</th>
       <td mat-cell *matCellDef="let r">{{ r.method }}</td>
@@ -16,7 +16,7 @@
     <tr
       mat-row
       *matRowDef="let row; columns: displayedColumns"
-      class="cursor-pointer hover:bg-black/[0.04]"
+      class="rl-row cursor-pointer hover:bg-black/[0.04]"
       (click)="onRowClick(row)"
     ></tr>
   </table>

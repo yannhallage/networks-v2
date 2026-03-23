@@ -7,7 +7,7 @@ import type { NetworkRequest } from '../../../../core/types';
   templateUrl: './detail-response.component.html',
   host: {
     class:
-      'flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden bg-white font-mono text-[12px] text-neutral-800',
+      'rd-pane rd-response flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden font-mono text-[12px] text-neutral-800',
   },
 })
 export class DetailResponseComponent {
