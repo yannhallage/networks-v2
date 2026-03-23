@@ -8,8 +8,12 @@
     <div class="ml-auto flex items-center gap-1">
       <button
         type="button"
+        title="Mode clair"
         aria-label="Mode clair"
-        class="rounded border cursor-pointer  bg-white px-1.5 py-[1px] text-[10px] font-medium text-neutral-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+        [attr.aria-pressed]="isThemePreference('light')"
+        [ngClass]="isThemePreference('light') ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
+        class="rounded border cursor-pointer px-1.5 py-[1px] text-[10px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+        (click)="setThemePreference('light')"
       >
         <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8"
           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -19,12 +23,31 @@
       </button>
       <button
         type="button"
+        title="Mode sombre"
         aria-label="Mode sombre"
-        class="rounded border cursor-pointer border-neutral-400 bg-neutral-800 px-1.5 py-[1px] text-[10px] font-medium text-neutral-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors hover:bg-neutral-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+        [attr.aria-pressed]="isThemePreference('dark')"
+        [ngClass]="isThemePreference('dark') ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-neutral-400 bg-neutral-800 text-neutral-100 hover:bg-neutral-700'"
+        class="rounded border cursor-pointer px-1.5 py-[1px] text-[10px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+        (click)="setThemePreference('dark')"
       >
         <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8"
           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M20.3 14.2A8.5 8.5 0 1 1 9.8 3.7a7 7 0 1 0 10.5 10.5z"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        title="Mode automatique"
+        aria-label="Mode automatique"
+        [attr.aria-pressed]="isThemePreference('auto')"
+        [ngClass]="isThemePreference('auto') ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
+        class="rounded border cursor-pointer px-1.5 py-[1px] text-[10px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+        (click)="setThemePreference('auto')"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="12" rx="1.8"></rect>
+          <path d="M8 20h8M12 17v3"></path>
         </svg>
       </button>
     </div>

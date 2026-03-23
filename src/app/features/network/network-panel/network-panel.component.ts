@@ -4,6 +4,8 @@ import {
   EventEmitter,
   HostListener,
   Input,
+  OnDestroy,
+  OnInit,
   Output,
   computed,
   signal,
@@ -12,6 +14,8 @@ import { DEFAULT_PAGE_TIMINGS } from '../../../data/default-network.data';
 import type { NetworkRequest } from '../../../core/types';
 import type { NetworkRowView } from '../models/network-row.model';
 import { NetworkChartComponent } from '../network-chart/network-chart.component';
+
+type ThemePreference = 'light' | 'dark' | 'auto';
 
 @Component({
   selector: 'app-network-panel',
@@ -23,7 +27,7 @@ import { NetworkChartComponent } from '../network-chart/network-chart.component'
       'box-border flex min-h-0 min-w-0 w-full flex-1 flex-col self-stretch overflow-hidden',
   },
 })
-export class NetworkPanelComponent {
+export class NetworkPanelComponent implements OnInit, OnDestroy {
   @Input() set requests(value: NetworkRequest[] | null) {
     this.requestsSignal.set(value ?? []);
   }
@@ -48,6 +52,19 @@ export class NetworkPanelComponent {
 
   readonly sortKey = signal<keyof NetworkRowView | 'name'>('startMs');
   readonly sortDir = signal<'asc' | 'desc'>('asc');
+  readonly themePreference = signal<ThemePreference>('auto');
+  readonly resolvedTheme = computed<'light' | 'dark'>(() => {
+    const pref = this.themePreference();
+    if (pref === 'auto') {
+      return this.systemPrefersDark() ? 'dark' : 'light';
+    }
+    return pref;
+  });
+
+  private readonly systemPrefersDark = signal(false);
+  private readonly storageKey = 'networkPanelThemePreference';
+  private mediaQuery: MediaQueryList | null = null;
+  private mediaQueryListener: ((event: MediaQueryListEvent) => void) | null = null;
 
   readonly rows = computed(() => {
     const raw = this.requestsSignal();
@@ -71,6 +88,25 @@ export class NetworkPanelComponent {
       finishMs: (finishMs / 1000).toFixed(2),
     };
   });
+
+  ngOnInit(): void {
+    this.themePreference.set(this.readStoredThemePreference());
+    if (typeof window === 'undefined' || !window.matchMedia) {
+      return;
+    }
+    this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    this.systemPrefersDark.set(this.mediaQuery.matches);
+    this.mediaQueryListener = (event: MediaQueryListEvent) => {
+      this.systemPrefersDark.set(event.matches);
+    };
+    this.mediaQuery.addEventListener('change', this.mediaQueryListener);
+  }
+
+  ngOnDestroy(): void {
+    if (this.mediaQuery && this.mediaQueryListener) {
+      this.mediaQuery.removeEventListener('change', this.mediaQueryListener);
+    }
+  }
 
   onRowClick(row: NetworkRowView): void {
     const req = this.requestsSignal().find((r) => r.id === row.id);
@@ -124,6 +160,17 @@ export class NetworkPanelComponent {
     return (this.loadEventMs / 1000).toFixed(2);
   }
 
+  setThemePreference(value: ThemePreference): void {
+    this.themePreference.set(value);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(this.storageKey, value);
+    }
+  }
+
+  isThemePreference(value: ThemePreference): boolean {
+    return this.themePreference() === value;
+  }
+
   private mapRequest(r: NetworkRequest, sessionStart: number): NetworkRowView {
     const startMs = r.timestamp - sessionStart;
     const durationMs = r.duration ?? 80;
@@ -167,6 +214,14 @@ export class NetworkPanelComponent {
   private parseSizeKb(s: string): number {
     const m = s.match(/([\d.]+)/);
     return m ? parseFloat(m[1]) : 0;
+  }
+
+  private readStoredThemePreference(): ThemePreference {
+    if (typeof localStorage === 'undefined') {
+      return 'auto';
+    }
+    const stored = localStorage.getItem(this.storageKey);
+    return stored === 'light' || stored === 'dark' || stored === 'auto' ? stored : 'auto';
   }
 
   private sortRows(rows: NetworkRowView[]): NetworkRowView[] {
