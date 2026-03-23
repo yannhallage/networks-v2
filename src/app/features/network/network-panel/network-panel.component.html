@@ -1,15 +1,38 @@
 <!-- Panneau Network : en-tête, waterfall, tableau des requêtes, barre de stats -->
 <div
-  class="box-border flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-[#fafafa] font-sans text-[11px] text-neutral-800 antialiased">
+  class="box-border flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-[#f7f8fa] font-sans text-[11px] text-neutral-800 antialiased">
   <!-- Titre du panneau (style barre d’outils) -->
   <header
-    class="flex h-7 shrink-0 items-center border-b border-neutral-300/90 bg-gradient-to-b from-[#f6f6f6] to-[#ececec] px-2 text-[11px] font-semibold text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.85)]">
+    class="flex h-7 shrink-0 items-center border-b border-neutral-300/90 bg-gradient-to-b from-[#f8f9fb] to-[#ebedf0] px-2 text-[11px] font-semibold text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.92)]">
     <span class="select-none">Network</span>
+    <div class="ml-auto flex items-center gap-1">
+      <button
+        type="button"
+        aria-label="Mode clair"
+        class="rounded border cursor-pointer  bg-white px-1.5 py-[1px] text-[10px] font-medium text-neutral-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] transition-colors hover:bg-neutral-50 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56M17.51 17.51l1.56 1.56M2 12h2.2M19.8 12H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        aria-label="Mode sombre"
+        class="rounded border cursor-pointer border-neutral-400 bg-neutral-800 px-1.5 py-[1px] text-[10px] font-medium text-neutral-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors hover:bg-neutral-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.3 14.2A8.5 8.5 0 1 1 9.8 3.7a7 7 0 1 0 10.5 10.5z"></path>
+        </svg>
+      </button>
+    </div>
   </header>
 
   <!-- Graphique waterfall (Chart.js) : masqué si aucune ligne -->
   <div
-    class="flex max-h-[min(42vh,22rem)] min-h-[140px] shrink-0 flex-col overflow-hidden border-b border-neutral-300 bg-white">
+    class="flex max-h-[min(42vh,22rem)] min-h-[140px] shrink-0 flex-col overflow-hidden border-b border-neutral-300/90 bg-white">
     @if (rows().length > 0) {
     <app-network-chart [rows]="rows()" />
     }
@@ -27,63 +50,63 @@
         <!-- En-têtes : tri au clic ; poignée à droite pour redimensionner la colonne -->
         <tr class="shadow-[0_1px_0_0_rgba(0,0,0,0.08)]">
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-name,280px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-name,280px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
             <button type="button"
-              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
               (click)="sortBy('name')">
               Name
             </button>
-            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
               (pointerdown)="onColResizeStart($event, 'name')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-status,220px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-status,220px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
             <button type="button"
-              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
               (click)="sortBy('status')">
               Status
             </button>
-            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
               (pointerdown)="onColResizeStart($event, 'status')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-type,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-type,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
             <button type="button"
-              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
               (click)="sortBy('type')">
               Type
             </button>
-            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
               (pointerdown)="onColResizeStart($event, 'type')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-init,160px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-init,160px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
             <button type="button"
-              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
               (click)="sortBy('initiator')">
               Initiator
             </button>
-            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
               (pointerdown)="onColResizeStart($event, 'initiator')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-size,88px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-size,88px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
             <button type="button"
-              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
               (click)="sortBy('size')">
               Size
             </button>
-            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
               (pointerdown)="onColResizeStart($event, 'size')"></span>
           </th>
           <th
-            class="relative sticky top-0 z-10 h-7 w-[var(--w-time,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#f8f8f8] to-[#ececec] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-time,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
             <button type="button"
-              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit hover:bg-black/[0.06]"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
               (click)="sortBy('timeMs')">
               Time
             </button>
-            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/10"
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
               (pointerdown)="onColResizeStart($event, 'time')"></span>
           </th>
         </tr>
@@ -92,37 +115,37 @@
         <!-- Ligne : clic ouvre le détail ; erreur = pastille rouge + texte rouge -->
         @for (row of rows(); track row.id) {
         <tr
-          class="cursor-pointer border-b border-neutral-100 transition-colors hover:bg-blue-50/60 even:bg-neutral-50/90"
+          class="cursor-pointer border-b border-neutral-100/90 transition-colors hover:bg-blue-50/60 even:bg-[#fafbfc]"
           [ngClass]="{ 'text-[#c5221f]': row.statusFailed }" (click)="onRowClick(row)">
           <!-- Nom + indicateur d’échec -->
           <td
-            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle last:border-r-0">
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle last:border-r-0">
             @if (row.statusFailed) {
             <span class="mr-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-[#c5221f] align-middle shadow-sm"
               aria-hidden="true"></span>
             }
-            <span class="align-middle font-medium text-neutral-900">{{
+            <span class="align-middle font-medium text-neutral-900/95">{{
               row.name
               }}</span>
           </td>
           <td
-            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle text-[11px] last:border-r-0">
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle text-[11px] last:border-r-0">
             {{ row.status }}
           </td>
           <td
-            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle text-[11px] last:border-r-0">
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle text-[11px] text-neutral-700 last:border-r-0">
             {{ row.type }}
           </td>
           <td
-            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle text-[11px] text-[#1a73e8] underline decoration-solid underline-offset-2 last:border-r-0">
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle text-[11px] text-[#1a73e8] no-underline hover:underline underline-offset-2 last:border-r-0">
             {{ row.initiator }}
           </td>
           <td
-            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800 last:border-r-0">
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800/95 last:border-r-0">
             {{ row.size }}
           </td>
           <td
-            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100 border-r border-neutral-100 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800 last:border-r-0">
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800/95 last:border-r-0">
             {{ (row.timeMs / 1000) | number: '1.2-2' }} s
           </td>
         </tr>
@@ -133,7 +156,7 @@
 
   <!-- Résumé : compteurs, transfert, fin de chargement, DCL / Load -->
   <footer
-    class="flex shrink-0 flex-wrap items-center gap-y-1 border-t border-neutral-300 bg-gradient-to-b from-[#f4f4f4] to-[#e8e8e8] px-2 py-1.5 text-[11px] text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.7)]">
+    class="flex shrink-0 flex-wrap items-center gap-y-1 border-t border-neutral-300/90 bg-gradient-to-b from-[#f4f6f8] to-[#e7eaee] px-2 py-1.5 text-[11px] text-neutral-700 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75)]">
     <span class="tabular-nums">{{ footerStats().shown }} / {{ footerStats().total }} requêtes</span>
     <span class="mx-1.5 text-neutral-400">|</span>
     <span class="tabular-nums">{{ footerStats().transferredKb }} kB transférés</span>
