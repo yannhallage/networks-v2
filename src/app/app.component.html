@@ -1,12 +1,14 @@
 <div
-  class="flex min-h-0 flex-1 overflow-hidden bg-[#dcdcdc] p-1.5 shadow-inner sm:p-2"
+  class="app-shell-bg flex min-h-0 flex-1 overflow-hidden p-1.5 shadow-inner sm:p-2"
 >
   <div
-    class="flex min-h-0 min-w-0 flex-1 basis-0 flex-col overflow-hidden rounded-md border border-neutral-400/50 bg-white shadow-md"
+    class="app-panel-surface app-panel-border flex min-h-0 min-w-0 flex-1 basis-0 flex-col overflow-hidden rounded-md border shadow-md"
   >
     <app-network-panel
       [requests]="(requests$ | async) ?? []"
       (rowSelected)="onSelect($event)"
+      (compareRequested)="onCompare($event)"
+      (sessionImported)="onSessionImported($event)"
     />
   </div>
   <div
@@ -23,13 +25,15 @@
     ></span>
   </div>
   <div
-    class="flex min-h-0 shrink-0 flex-col overflow-hidden rounded-md border border-neutral-400/50 bg-white shadow-md"
+    class="app-panel-surface app-panel-border flex min-h-0 shrink-0 flex-col overflow-hidden rounded-md border shadow-md"
     [style.width.px]="detailPanelWidth()"
     [style.minWidth.px]="200"
   >
     <app-request-detail
       [request]="selected"
+      [comparison]="comparePair"
       (closePanel)="selected = null"
+      (replayCaptured)="onReplayCaptured($event)"
     />
   </div>
 </div>

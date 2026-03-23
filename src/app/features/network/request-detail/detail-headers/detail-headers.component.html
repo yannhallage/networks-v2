@@ -1,11 +1,11 @@
-<details class="group border-b border-neutral-200" open>
+<details class="dh-section group border-b border-neutral-200" open>
   <summary
-    class="cursor-pointer list-none bg-[#f3f3f3] px-2 py-1.5 text-[11px] font-semibold text-neutral-800 marker:content-none [&::-webkit-details-marker]:hidden"
+    class="dh-summary cursor-pointer list-none bg-[#f3f3f3] px-2 py-1.5 text-[11px] font-semibold text-neutral-800 marker:content-none [&::-webkit-details-marker]:hidden"
   >
     <span class="mr-1 inline-block w-2 text-[9px] text-neutral-500">▼</span>
     General
   </summary>
-  <div class="grid grid-cols-[minmax(7rem,auto)_1fr] gap-x-6 gap-y-1.5 px-3 py-2.5">
+  <div class="dh-grid grid grid-cols-[minmax(7rem,auto)_1fr] gap-x-6 gap-y-1.5 px-3 py-2.5">
     <span class="font-semibold text-neutral-600">Request URL</span>
     <span class="break-all text-neutral-900">{{ request().url }}</span>
     <span class="font-semibold text-neutral-600">Request Method</span>
@@ -27,9 +27,9 @@
   </div>
 </details>
 
-<details class="group border-b border-neutral-200" open>
+<details class="dh-section group border-b border-neutral-200" open>
   <summary
-    class="cursor-pointer list-none bg-[#f3f3f3] px-2 py-1.5 text-[11px] font-semibold text-neutral-800 marker:content-none [&::-webkit-details-marker]:hidden"
+    class="dh-summary cursor-pointer list-none bg-[#f3f3f3] px-2 py-1.5 text-[11px] font-semibold text-neutral-800 marker:content-none [&::-webkit-details-marker]:hidden"
   >
     <span class="mr-1 inline-block w-2 text-[9px] text-neutral-500">▼</span>
     Response headers
@@ -37,7 +37,7 @@
   @if (entries(request().responseHeaders).length === 0) {
   <p class="px-3 py-2 text-neutral-500">Aucun en-tête de réponse.</p>
   } @else {
-  <div class="grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-6 gap-y-1 px-3 py-2.5">
+  <div class="dh-grid grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-6 gap-y-1 px-3 py-2.5">
     @for (pair of entries(request().responseHeaders); track pair[0]) {
     <span class="font-semibold text-neutral-600">{{ pair[0] }}</span>
     <span class="break-all text-neutral-900">{{ pair[1] }}</span>
@@ -46,9 +46,9 @@
   }
 </details>
 
-<details class="group border-b border-neutral-200" open>
+<details class="dh-section group border-b border-neutral-200" open>
   <summary
-    class="cursor-pointer list-none bg-[#f3f3f3] px-2 py-1.5 text-[11px] font-semibold text-neutral-800 marker:content-none [&::-webkit-details-marker]:hidden"
+    class="dh-summary cursor-pointer list-none bg-[#f3f3f3] px-2 py-1.5 text-[11px] font-semibold text-neutral-800 marker:content-none [&::-webkit-details-marker]:hidden"
   >
     <span class="mr-1 inline-block w-2 text-[9px] text-neutral-500">▼</span>
     Request headers
@@ -56,7 +56,7 @@
   @if (entries(request().requestHeaders).length === 0) {
   <p class="px-3 py-2 text-neutral-500">Aucun en-tête de requête.</p>
   } @else {
-  <div class="grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-6 gap-y-1 px-3 py-2.5">
+  <div class="dh-grid grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-6 gap-y-1 px-3 py-2.5">
     @for (pair of entries(request().requestHeaders); track pair[0]) {
     <span class="font-semibold text-neutral-600">{{ pair[0] }}</span>
     <span class="break-all text-neutral-900">{{ pair[1] }}</span>

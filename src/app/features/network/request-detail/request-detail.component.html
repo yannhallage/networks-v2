@@ -1,9 +1,9 @@
 @if (request(); as req) {
 <div
-  class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white font-sans text-[11px] text-neutral-800 antialiased"
+  class="rd-root flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white font-sans text-[11px] text-neutral-800 antialiased"
 >
   <div
-    class="flex shrink-0 items-end border-b border-neutral-300 bg-white pl-0 pr-1 pt-0"
+    class="rd-tablist flex shrink-0 items-end border-b border-neutral-300 bg-white pl-0 pr-1 pt-0"
     role="tablist"
     aria-label="Détails de la requête"
   >
@@ -16,6 +16,7 @@
       ×
     </button>
     @for (tab of tabs; track tab.id) {
+    @if (tab.id !== 'compare' || comparison()) {
     <button
       type="button"
       role="tab"
@@ -27,9 +28,63 @@
       {{ tab.label }}
     </button>
     }
+    }
+    <div class="ml-auto flex items-center gap-1 pb-0.5">
+      <button
+        type="button"
+        title="Copier URL"
+        aria-label="Copier URL"
+        class="inline-flex h-5 cursor-pointer w-5 items-center justify-center rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+        (click)="copyUrl()"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="10" height="10" rx="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        title="Copier cURL"
+        aria-label="Copier cURL"
+        class="inline-flex h-5 cursor-pointer w-5 items-center justify-center rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+        (click)="copyCurl()"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M7 8 3 12l4 4"></path>
+          <path d="m17 8 4 4-4 4"></path>
+          <path d="M14 4 10 20"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        title="Rejouer"
+        aria-label="Rejouer"
+        class="inline-flex h-5 cursor-pointer w-5 items-center justify-center rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+        (click)="replayRequest()"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+          <path d="M21 3v6h-6"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        title="Ouvrir"
+        aria-label="Ouvrir"
+        class="inline-flex h-5 cursor-pointer w-5 items-center justify-center rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+        (click)="openInNewTab()"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 3h7v7"></path>
+          <path d="M10 14 21 3"></path>
+          <path d="M21 14v5a2 2 0 0 1-2 2h-5"></path>
+          <path d="M10 21H5a2 2 0 0 1-2-2v-5"></path>
+        </svg>
+      </button>
+    </div>
   </div>
   <div
-    class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+    class="rd-content flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
     role="tabpanel"
     [attr.aria-label]="activeTab()"
   >
@@ -39,12 +94,17 @@
     <app-detail-preview [request]="req" />
     } @case ('response') {
     <app-detail-response [request]="req" />
+    } @case ('compare') { @if (comparison(); as pair) {
+    <app-detail-compare [pair]="pair" />
+    } @else {
+    <div class="p-3 text-neutral-500">Sélectionnez 2 requêtes dans le tableau puis cliquez sur Comparer.</div>
+    }
     } }
   </div>
 </div>
 } @else {
 <div
-  class="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-4 py-8 text-center text-sm text-neutral-500"
+  class="rd-empty flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-4 py-8 text-center text-sm text-neutral-500"
 >
   <span
     class="rounded-full bg-neutral-100 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400"

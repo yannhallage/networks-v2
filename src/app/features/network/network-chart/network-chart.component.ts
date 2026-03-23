@@ -35,6 +35,7 @@ Chart.register(
 const LINE_COLOR = '#0d9488';
 const LINE_FILL = 'rgba(13, 148, 136, 0.12)';
 const BUCKET_COUNT = 48;
+type ResolvedTheme = 'light' | 'dark';
 
 function formatAxisTime(ms: number, spanMs: number): string {
   const d = new Date(ms);
@@ -77,7 +78,7 @@ function diagonalHatchPattern(ctx: CanvasRenderingContext2D): CanvasPattern | nu
   return ctx.createPattern(p, 'repeat');
 }
 
-function hatchBackgroundPlugin(): Plugin {
+function hatchBackgroundPlugin(theme: ResolvedTheme): Plugin {
   return {
     id: 'hatchBackground',
     beforeDraw(chart) {
@@ -85,7 +86,7 @@ function hatchBackgroundPlugin(): Plugin {
       if (!chartArea) return;
       const pattern = diagonalHatchPattern(ctx);
       ctx.save();
-      ctx.fillStyle = '#f6f7f8';
+      ctx.fillStyle = theme === 'dark' ? '#0c1424' : '#f6f7f8';
       ctx.fillRect(chartArea.left, chartArea.top, chartArea.width, chartArea.height);
       if (pattern) {
         ctx.fillStyle = pattern;
@@ -160,12 +161,20 @@ export class NetworkChartComponent implements AfterViewInit, OnChanges, OnDestro
 
   private chart?: Chart;
   private resizeObserver?: ResizeObserver;
+  private themeObserver?: MutationObserver;
 
   ngAfterViewInit(): void {
     const host = this.canvasRef?.nativeElement?.parentElement;
     if (host && typeof ResizeObserver !== 'undefined') {
       this.resizeObserver = new ResizeObserver(() => this.chart?.resize());
       this.resizeObserver.observe(host);
+    }
+    if (typeof MutationObserver !== 'undefined' && typeof document !== 'undefined') {
+      this.themeObserver = new MutationObserver(() => this.renderChart());
+      this.themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme'],
+      });
     }
     this.renderChart();
   }
@@ -179,6 +188,7 @@ export class NetworkChartComponent implements AfterViewInit, OnChanges, OnDestro
 
   ngOnDestroy(): void {
     this.resizeObserver?.disconnect();
+    this.themeObserver?.disconnect();
     this.chart?.destroy();
     this.chart = undefined;
   }
@@ -199,7 +209,12 @@ export class NetworkChartComponent implements AfterViewInit, OnChanges, OnDestro
     const spanMs = domainMax - domainMin;
     const maxCount = Math.max(1, ...bucketMeta.map((b) => b.count));
 
-    const hatchPlugin = hatchBackgroundPlugin();
+    const theme = this.currentTheme();
+    const hatchPlugin = hatchBackgroundPlugin(theme);
+    const gridColor = theme === 'dark' ? 'rgba(148, 163, 184, 0.22)' : 'rgba(0, 0, 0, 0.08)';
+    const tickColor = theme === 'dark' ? '#93a4bd' : '#5f6368';
+    const yTitleColor = theme === 'dark' ? '#b8c8e5' : '#70757a';
+    const pointHoverBorder = theme === 'dark' ? '#0b1220' : '#ffffff';
 
     const config: ChartConfiguration<'line'> = {
       type: 'line',
@@ -217,7 +232,7 @@ export class NetworkChartComponent implements AfterViewInit, OnChanges, OnDestro
             pointRadius: 0,
             pointHoverRadius: 4,
             pointHoverBackgroundColor: LINE_COLOR,
-            pointHoverBorderColor: '#fff',
+            pointHoverBorderColor: pointHoverBorder,
             pointHoverBorderWidth: 1,
           },
         ],
@@ -253,11 +268,11 @@ export class NetworkChartComponent implements AfterViewInit, OnChanges, OnDestro
             type: 'linear',
             min: domainMin,
             max: domainMax,
-            grid: { color: 'rgba(0, 0, 0, 0.08)' },
+            grid: { color: gridColor },
             ticks: {
               maxTicksLimit: 6,
               font: { size: 10, family: 'system-ui, sans-serif' },
-              color: '#5f6368',
+              color: tickColor,
               callback: (raw) => formatAxisTime(Number(raw), spanMs),
             },
             border: { display: false },
@@ -266,18 +281,18 @@ export class NetworkChartComponent implements AfterViewInit, OnChanges, OnDestro
             type: 'linear',
             beginAtZero: true,
             suggestedMax: maxCount < 4 ? 4 : undefined,
-            grid: { color: 'rgba(0, 0, 0, 0.07)' },
+            grid: { color: gridColor },
             ticks: {
               precision: 0,
               maxTicksLimit: 6,
               font: { size: 10, family: 'system-ui, sans-serif' },
-              color: '#5f6368',
+              color: tickColor,
             },
             border: { display: false },
             title: {
               display: true,
               text: 'Requêtes / fenêtre',
-              color: '#70757a',
+              color: yTitleColor,
               font: { size: 10, weight: 'bold' },
             },
           },
@@ -292,5 +307,12 @@ export class NetworkChartComponent implements AfterViewInit, OnChanges, OnDestro
   /** Hauteur fixe type tableau de bord (zone au-dessus du tableau) */
   chartHeightPx(): number {
     return 200;
+  }
+
+  private currentTheme(): ResolvedTheme {
+    if (typeof document === 'undefined') {
+      return 'light';
+    }
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   }
 }
