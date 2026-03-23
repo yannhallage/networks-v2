@@ -1,4 +1,4 @@
-# Api-Inspector
+# Network-Inspector
 
 ![Aperçu de l’interface : panneau Réseau (graphique, liste des requêtes) et détail de la réponse JSON](docs/screenshot.png)
 
