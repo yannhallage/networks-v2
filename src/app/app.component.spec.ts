@@ -1,28 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
-import { NetworkStore } from './core/network.store';
-import { WebSocketService } from './core/websocket.service';
+import { routes } from './app.routes';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-    })
-      .overrideProvider(WebSocketService, {
-        useValue: {
-          connect: (): void => {},
-          disconnect: (): void => {},
-          messages$: of(),
-        },
-      })
-      .overrideProvider(NetworkStore, {
-        useValue: {
-          requests$: of([]),
-          addRequest: (): void => {},
-        },
-      })
-      .compileComponents();
+      providers: [provideRouter(routes)],
+    }).compileComponents();
   });
 
   it('should create the app', () => {

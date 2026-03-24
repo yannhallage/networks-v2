@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Aper?u Network Inspector">
+  <defs>
+    <linearGradient id="shell" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#dcdcdc"/>
+      <stop offset="100%" style="stop-color:#c8c8c8"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fb"/>
+      <stop offset="100%" style="stop-color:#f0f2f5"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1a73e8"/>
+      <stop offset="100%" style="stop-color:#188038"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" rx="12" fill="url(#shell)"/>
+  <rect x="24" y="24" width="912" height="492" rx="8" fill="#fff" stroke="rgb(163 163 163 / 0.5)" stroke-width="1"/>
+  <rect x="32" y="36" width="896" height="28" rx="4" fill="url(#panel)" stroke="#d4d4d4" stroke-width="1"/>
+  <text x="44" y="55" font-family="Roboto, sans-serif" font-size="13" font-weight="600" fill="#404040">Network</text>
+  <rect x="110" y="42" width="72" height="18" rx="3" fill="#fff" stroke="#d4d4d4"/>
+  <text x="118" y="55" font-family="Roboto, sans-serif" font-size="10" fill="#525252">Export JSON</text>
+  <rect x="32" y="76" width="896" height="64" rx="4" fill="#f7f8fa" stroke="#e5e5e5"/>
+  <line x1="48" y1="108" x2="912" y2="108" stroke="#e0e0e0" stroke-width="1"/>
+  <rect x="56" y="92" width="320" height="10" rx="2" fill="url(#bar)" opacity="0.85"/>
+  <rect x="56" y="118" width="180" height="8" rx="2" fill="#9aa0a6" opacity="0.5"/>
+  <rect x="32" y="152" width="560" height="348" rx="4" fill="#fff" stroke="#e5e5e5"/>
+  <rect x="32" y="152" width="560" height="22" fill="#ebedf0" stroke="#d4d4d4"/>
+  <text x="44" y="167" font-family="Roboto, sans-serif" font-size="10" font-weight="600" fill="#525252">Name</text>
+  <text x="280" y="167" font-family="Roboto, sans-serif" font-size="10" font-weight="600" fill="#525252">Status</text>
+  <text x="380" y="167" font-family="Roboto, sans-serif" font-size="10" font-weight="600" fill="#525252">Type</text>
+  <text x="460" y="167" font-family="Roboto, sans-serif" font-size="10" font-weight="600" fill="#525252">Time</text>
+  <g font-family="Roboto, sans-serif" font-size="10" fill="#404040">
+    <rect x="36" y="178" width="552" height="20" fill="#fafafa"/>
+    <text x="44" y="192">api/users</text>
+    <text x="280" y="192" fill="#188038">200</text>
+    <text x="380" y="192">xhr</text>
+    <text x="460" y="192">124 ms</text>
+    <rect x="36" y="198" width="552" height="20" fill="#fff"/>
+    <text x="44" y="212">graphql</text>
+    <text x="280" y="212" fill="#188038">200</text>
+    <text x="380" y="212">fetch</text>
+    <text x="460" y="212">56 ms</text>
+    <rect x="36" y="218" width="552" height="20" fill="#fafafa"/>
+    <text x="44" y="232">stream/events</text>
+    <text x="280" y="232" fill="#1a73e8"></text>
+    <text x="380" y="232">ws</text>
+    <text x="460" y="232">&</text>
+  </g>
+  <rect x="604" y="152" width="324" height="348" rx="4" fill="#fff" stroke="#e5e5e5"/>
+  <rect x="604" y="152" width="324" height="28" fill="#ebedf0" stroke="#d4d4d4"/>
+  <text x="616" y="170" font-family="Roboto, sans-serif" font-size="10" font-weight="600" fill="#525252">Headers ? Preview ? Response</text>
+  <rect x="616" y="196" width="300" height="120" rx="4" fill="#f7f8fa" stroke="#e5e5e5"/>
+  <text x="628" y="218" font-family="Roboto, sans-serif" font-size="9" fill="#737373">Request headers</text>
+  <text x="628" y="238" font-family="Roboto, sans-serif" font-size="9" fill="#525252">accept: application/json</text>
+</svg>

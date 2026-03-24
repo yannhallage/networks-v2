@@ -1,0 +1,39 @@
+<div
+  class="app-shell-bg flex min-h-0 flex-1 overflow-hidden p-1.5 shadow-inner sm:p-2"
+>
+  <div
+    class="app-panel-surface app-panel-border flex min-h-0 min-w-0 flex-1 basis-0 flex-col overflow-hidden rounded-md border shadow-md"
+  >
+    <app-network-panel
+      (rowSelected)="onSelect($event)"
+      (compareRequested)="onCompare($event)"
+      (sessionImported)="onSessionImported($event)"
+      (panelCleared)="onPanelCleared()"
+    />
+  </div>
+  <div
+    role="separator"
+    aria-orientation="vertical"
+    aria-label="Redimensionner le panneau des détails"
+    tabindex="0"
+    class="group relative z-10 ml-1.5 w-2 shrink-0 cursor-col-resize touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-blue-400/80 focus-visible:ring-offset-1 sm:ml-2"
+    (pointerdown)="onDetailResizeStart($event)"
+    (keydown)="onDetailResizeKeydown($event)"
+  >
+    <span
+      class="absolute inset-y-2 left-1/2 w-px -translate-x-1/2 rounded-full bg-neutral-300 transition-colors group-hover:bg-blue-400 group-active:bg-blue-500"
+    ></span>
+  </div>
+  <div
+    class="app-panel-surface app-panel-border flex min-h-0 shrink-0 flex-col overflow-hidden rounded-md border shadow-md"
+    [style.width.px]="detailPanelWidth()"
+    [style.minWidth.px]="200"
+  >
+    <app-request-detail
+      [request]="selected"
+      [comparison]="comparePair"
+      (closePanel)="selected = null"
+      (replayCaptured)="onReplayCaptured($event)"
+    />
+  </div>
+</div>
