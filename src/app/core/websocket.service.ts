@@ -1,14 +1,14 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-import type { WsServerMessage } from './types';
 
 const WS_URL = 'ws://localhost:4000';
 const RECONNECT_MS = 3000;
 
 @Injectable({ providedIn: 'root' })
 export class WebSocketService implements OnDestroy {
-  private readonly messagesSubject = new Subject<WsServerMessage>();
-  readonly messages$: Observable<WsServerMessage> = this.messagesSubject.asObservable();
+  /** Messages JSON renvoyés par server-inspector (forme libre côté typage). */
+  private readonly messagesSubject = new Subject<any>();
+  readonly messages$: Observable<any> = this.messagesSubject.asObservable();
 
   private socket: WebSocket | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -41,7 +41,7 @@ export class WebSocketService implements OnDestroy {
         return;
       }
       try {
-        const data = JSON.parse(event.data) as WsServerMessage;
+        const data = JSON.parse(event.data) as any;
         this.messagesSubject.next(data);
       } catch (e) {
         console.error('[WebSocketService] JSON parse error', e, event.data);

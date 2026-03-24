@@ -1,9 +1,8 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   Component,
   EventEmitter,
   HostListener,
-  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -12,8 +11,8 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { DEFAULT_PAGE_TIMINGS } from '../../../data/default-network.data';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NetworkStore } from '../../../core/network.store';
 import type { NetworkRequest } from '../../../core/types';
 import type { NetworkRowView } from '../models/network-row.model';
 import { NetworkChartComponent } from '../network-chart/network-chart.component';
@@ -31,21 +30,21 @@ type ThemePreference = 'light' | 'dark' | 'auto';
   },
 })
 export class NetworkPanelComponent implements OnInit, OnDestroy {
-  @Input() set requests(value: NetworkRequest[] | null) {
-    this.requestsSignal.set(value ?? []);
-  }
+  private readonly store = inject(NetworkStore);
+  /** Même flux que WebSocket / import : le store est la source unique. */
+  readonly requestsSignal = toSignal(this.store.requests$, {
+    initialValue: [] as NetworkRequest[],
+  });
+
   @Output() rowSelected = new EventEmitter<NetworkRequest>();
   @Output() compareRequested = new EventEmitter<[NetworkRequest, NetworkRequest]>();
   @Output() sessionImported = new EventEmitter<NetworkRequest[]>();
+  @Output() panelCleared = new EventEmitter<void>();
   private readonly documentRef = inject(DOCUMENT);
 
-  private readonly requestsSignal = signal<NetworkRequest[]>([]);
   private colResize:
     | { col: 'name' | 'status' | 'type' | 'initiator' | 'size' | 'time'; startX: number }
     | null = null;
-
-  readonly domContentLoadedMs = DEFAULT_PAGE_TIMINGS.domContentLoadedMs;
-  readonly loadEventMs = DEFAULT_PAGE_TIMINGS.loadEventMs;
 
   readonly colWidths = signal({
     name: 280,
@@ -97,15 +96,23 @@ export class NetworkPanelComponent implements OnInit, OnDestroy {
   });
 
   readonly footerStats = computed(() => {
+    const raw = this.requestsSignal();
     const rows = this.rows();
     const totalKb = rows.reduce((acc, r) => acc + this.parseSizeKb(r.size), 0);
     const transferred = rows.some((r) => r.statusFailed) ? 0 : totalKb;
-    const finishMs = Math.max(...rows.map((r) => r.startMs + r.durationMs), 10180);
+    const resourcesBytes = raw.reduce((acc, r) => acc + this.estimateSizeBytes(r), 0);
+    const resourcesKb = (resourcesBytes / 1024).toLocaleString('fr-FR', {
+      maximumFractionDigits: 1,
+    });
+    const finishMs =
+      rows.length === 0
+        ? 0
+        : Math.max(...rows.map((r) => r.startMs + r.durationMs));
     return {
       shown: rows.length,
-      total: 37,
+      total: rows.length,
       transferredKb: transferred.toFixed(1),
-      resourcesKb: (2614).toLocaleString('fr-FR'),
+      resourcesKb,
       finishMs: (finishMs / 1000).toFixed(2),
       alerts: rows.reduce(
         (acc, row) => acc + (row.alertFlags.slow || row.alertFlags.error || row.alertFlags.large ? 1 : 0),
@@ -211,15 +218,17 @@ export class NetworkPanelComponent implements OnInit, OnDestroy {
     }));
   }
 
-  loadEventSeconds(): string {
-    return (this.loadEventMs / 1000).toFixed(2);
-  }
-
   setThemePreference(value: ThemePreference): void {
     this.themePreference.set(value);
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(this.storageKey, value);
     }
+  }
+
+  clearPanel(): void {
+    this.store.setRequests([]);
+    this.selectedCompareIds.set([]);
+    this.panelCleared.emit();
   }
 
   exportSession(): void {
