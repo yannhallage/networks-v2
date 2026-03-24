@@ -58,7 +58,9 @@
     background-color: var(--inspector-body-bg);
   }
 
-  app-root {
+  app-root,
+  app-home,
+  app-network-inspector-page {
     display: flex;
     flex-direction: column;
     flex: 1 1 0%;
