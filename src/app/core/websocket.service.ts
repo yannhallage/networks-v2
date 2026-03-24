@@ -1,8 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-
-const WS_URL = 'ws://localhost:4000';
-const RECONNECT_MS = 3000;
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class WebSocketService implements OnDestroy {
@@ -20,7 +18,7 @@ export class WebSocketService implements OnDestroy {
     this.closeSocketOnly();
 
     try {
-      this.socket = new WebSocket(WS_URL);
+      this.socket = new WebSocket(environment.wsUrl);
     } catch (e) {
       console.error('[WebSocketService] construct error', e);
       this.scheduleReconnect();
@@ -85,7 +83,7 @@ export class WebSocketService implements OnDestroy {
       if (!this.manualClose) {
         this.connect();
       }
-    }, RECONNECT_MS);
+    }, environment.reconnectDelayMs);
   }
 
   private clearReconnect(): void {
