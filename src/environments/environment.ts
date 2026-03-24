@@ -2,6 +2,7 @@
 export const environment = {
   production: false,
   /** WebSocket server-inspector en local. */
-  wsUrl: 'ws://localhost:4000',
+  wsUrl: 'wss://server-inspector-production.up.railway.app',
+  // wsUrl: 'ws://localhost:4000',
   reconnectDelayMs: 3000,
 };
