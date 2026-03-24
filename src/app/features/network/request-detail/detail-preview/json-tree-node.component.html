@@ -1,0 +1,108 @@
+@switch (kind()) { @case ('null') {
+<div class="inline">
+  @if (label(); as l) {
+  <span class="text-[#881391]">{{ l }}</span
+  ><span class="text-neutral-500">: </span>
+  }
+  <span class="text-[#1a73e8]">null</span>
+</div>
+} @case ('undefined') {
+<div class="inline">
+  @if (label(); as l) {
+  <span class="text-[#881391]">{{ l }}</span
+  ><span class="text-neutral-500">: </span>
+  }
+  <span class="text-neutral-400">undefined</span>
+</div>
+} @case ('string') {
+<div class="inline">
+  @if (label(); as l) {
+  <span class="text-[#881391]">{{ l }}</span
+  ><span class="text-neutral-500">: </span>
+  }
+  <span class="text-[#c5221f]">"{{ displayString() }}"</span>
+</div>
+} @case ('number') {
+<div class="inline">
+  @if (label(); as l) {
+  <span class="text-[#881391]">{{ l }}</span
+  ><span class="text-neutral-500">: </span>
+  }
+  <span class="text-[#1a73e8]">{{ value() }}</span>
+</div>
+} @case ('boolean') {
+<div class="inline">
+  @if (label(); as l) {
+  <span class="text-[#881391]">{{ l }}</span
+  ><span class="text-neutral-500">: </span>
+  }
+  <span class="text-[#1a73e8]">{{ value() }}</span>
+</div>
+} @case ('array') {
+<div>
+  <div class="flex items-start gap-0.5">
+    <button
+      type="button"
+      class="mt-0.5 inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-[9px] text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800"
+      (click)="toggle()"
+      [attr.aria-expanded]="expanded()"
+    >
+      {{ expanded() ? '▼' : '▶' }}
+    </button>
+    <div>
+      @if (label(); as l) {
+      <span class="text-[#881391]">{{ l }}</span
+      ><span class="text-neutral-500">: </span>
+      }
+      <span class="text-neutral-700">[</span>
+      @if (!expanded()) {
+      <span class="text-neutral-500">…</span>
+      }
+      <span class="text-neutral-700">]</span>
+      <span class="ml-1 text-neutral-500">({{ asArray().length }})</span>
+    </div>
+  </div>
+  @if (expanded()) {
+  <div class="ml-5 border-l border-neutral-200 pl-2">
+    @for (item of asArray(); track $index) {
+    <div class="py-px">
+      <app-json-tree-node [value]="item" [label]="'' + $index" />
+    </div>
+    }
+  </div>
+  }
+</div>
+} @case ('object') {
+<div>
+  <div class="flex items-start gap-0.5">
+    <button
+      type="button"
+      class="mt-0.5 inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-[9px] text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800"
+      (click)="toggle()"
+      [attr.aria-expanded]="expanded()"
+    >
+      {{ expanded() ? '▼' : '▶' }}
+    </button>
+    <div>
+      @if (label(); as l) {
+      <span class="text-[#881391]">{{ l }}</span
+      ><span class="text-neutral-500">: </span>
+      }
+      <span class="text-neutral-700">{{ '{' }}</span>
+      @if (!expanded()) {
+      <span class="text-neutral-500">…</span>
+      }
+      <span class="text-neutral-700">{{ '}' }}</span>
+    </div>
+  </div>
+  @if (expanded()) {
+  <div class="ml-5 border-l border-neutral-200 pl-2">
+    @for (entry of objectEntries(); track entry.key) {
+    <div class="py-px">
+      <app-json-tree-node [value]="entry.val" [label]="entry.key" />
+    </div>
+    }
+  </div>
+  }
+</div>
+} }

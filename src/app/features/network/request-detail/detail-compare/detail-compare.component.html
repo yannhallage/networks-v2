@@ -1,0 +1,35 @@
+<div class="dc-card mb-2 rounded border border-neutral-200">
+  <div class="dc-title border-b border-neutral-200 bg-neutral-50 px-2 py-1 font-semibold text-neutral-700">
+    Diff headers (request + response)
+  </div>
+  <div class="dc-grid grid grid-cols-[minmax(7rem,auto)_1fr_1fr] gap-x-3 gap-y-[1px] bg-neutral-100 p-[1px]">
+    <div class="bg-neutral-50 px-2 py-1 font-semibold">Clé</div>
+    <div class="bg-neutral-50 px-2 py-1 font-semibold">Requête A</div>
+    <div class="bg-neutral-50 px-2 py-1 font-semibold">Requête B</div>
+    @for (row of headerRows(); track row.key) {
+    <div class="bg-white px-2 py-1 font-medium text-neutral-700" [ngClass]="rowClass(row.state)">{{ row.key }}</div>
+    <div class="bg-white px-2 py-1 break-all text-neutral-800" [ngClass]="rowClass(row.state)">{{ row.left }}</div>
+    <div class="bg-white px-2 py-1 break-all text-neutral-800" [ngClass]="rowClass(row.state)">{{ row.right }}</div>
+    }
+  </div>
+</div>
+
+<div class="dc-card mb-2 rounded border border-neutral-200">
+  <div class="dc-title border-b border-neutral-200 bg-neutral-50 px-2 py-1 font-semibold text-neutral-700">
+    Diff body requête
+  </div>
+  <div class="grid grid-cols-2 gap-0">
+    <pre class="m-0 overflow-auto border-r border-neutral-200 p-2 text-[11px]">{{ requestBody().left }}</pre>
+    <pre class="m-0 overflow-auto p-2 text-[11px]" [ngClass]="requestBody().different ? 'bg-amber-50' : ''">{{ requestBody().right }}</pre>
+  </div>
+</div>
+
+<div class="dc-card rounded border border-neutral-200">
+  <div class="dc-title border-b border-neutral-200 bg-neutral-50 px-2 py-1 font-semibold text-neutral-700">
+    Diff body réponse
+  </div>
+  <div class="grid grid-cols-2 gap-0">
+    <pre class="m-0 overflow-auto border-r border-neutral-200 p-2 text-[11px]">{{ responseBody().left }}</pre>
+    <pre class="m-0 overflow-auto p-2 text-[11px]" [ngClass]="responseBody().different ? 'bg-amber-50' : ''">{{ responseBody().right }}</pre>
+  </div>
+</div>

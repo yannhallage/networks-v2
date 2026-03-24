@@ -1,0 +1,263 @@
+<!-- Panneau Network : en-tête, waterfall, tableau des requêtes, barre de stats -->
+<div
+  class="np-root box-border flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden rounded-[inherit] bg-[#f7f8fa] font-sans text-[11px] text-neutral-800 antialiased">
+  <!-- Titre du panneau (style barre d’outils) -->
+  <header
+    class="np-toolbar flex h-7 shrink-0 items-center border-b px-2 text-[11px] font-semibold shadow-[inset_0_1px_0_0_rgba(255,255,255,0.92)]"
+    [ngClass]="resolvedTheme() === 'dark'
+      ? 'border-slate-700/80 bg-gradient-to-b from-slate-900 to-slate-950 text-slate-200 shadow-none'
+      : 'border-neutral-300/90 bg-gradient-to-b from-[#f8f9fb] to-[#ebedf0] text-neutral-700'"
+  >
+    <span class="select-none">Network</span>
+    <button
+      type="button"
+      class="ml-2 rounded border px-2 py-[1px] text-[10px] font-medium"
+      [ngClass]="resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
+      (click)="exportSession()"
+    >
+      Export JSON
+    </button>
+    <label
+      class="cursor-pointer rounded border px-2 py-[1px] text-[10px] font-medium"
+      [ngClass]="resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
+    >
+      Import JSON/HAR
+      <input type="file" class="hidden" accept=".json,.har,application/json" (change)="onImportSessionFile($event)" />
+    </label>
+    <button
+      type="button"
+      class="rounded border px-2 py-[1px] text-[10px] font-medium"
+      [ngClass]="canCompare()
+        ? (resolvedTheme() === 'dark' ? 'border-blue-400 bg-blue-950/60 text-blue-200' : 'border-blue-500 bg-blue-50 text-blue-700')
+        : (resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-500' : 'border-neutral-300 bg-white text-neutral-400')"
+      [disabled]="!canCompare()"
+      (click)="emitCompareSelection()"
+    >
+      Comparer (2)
+    </button>
+    <button
+      type="button"
+      class="ml-2 rounded border px-2 py-[1px] text-[10px] font-medium"
+      [ngClass]="resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
+      [disabled]="requestsSignal().length === 0"
+      title="Vider la liste des requêtes capturées"
+      aria-label="Nettoyer le panneau Network"
+      (click)="clearPanel()"
+    >
+      Nettoyer
+    </button>
+    <div class="ml-auto flex items-center gap-1">
+      <button
+        type="button"
+        title="Mode clair"
+        aria-label="Mode clair"
+        [attr.aria-pressed]="isThemePreference('light')"
+        [ngClass]="isThemePreference('light')
+          ? (resolvedTheme() === 'dark' ? 'border-blue-400 bg-blue-950/60 text-blue-200' : 'border-blue-500 bg-blue-50 text-blue-700')
+          : (resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-200 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50')"
+        class="rounded border cursor-pointer px-1.5 py-[1px] text-[10px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+        (click)="setThemePreference('light')"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2.2M12 19.8V22M4.93 4.93l1.56 1.56M17.51 17.51l1.56 1.56M2 12h2.2M19.8 12H22M4.93 19.07l1.56-1.56M17.51 6.49l1.56-1.56"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        title="Mode sombre"
+        aria-label="Mode sombre"
+        [attr.aria-pressed]="isThemePreference('dark')"
+        [ngClass]="isThemePreference('dark')
+          ? (resolvedTheme() === 'dark' ? 'border-blue-400 bg-blue-950/60 text-blue-200' : 'border-blue-500 bg-blue-50 text-blue-700')
+          : (resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-400 bg-neutral-800 text-neutral-100 hover:bg-neutral-700')"
+        class="rounded border cursor-pointer px-1.5 py-[1px] text-[10px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+        (click)="setThemePreference('dark')"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.3 14.2A8.5 8.5 0 1 1 9.8 3.7a7 7 0 1 0 10.5 10.5z"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
+        title="Mode automatique"
+        aria-label="Mode automatique"
+        [attr.aria-pressed]="isThemePreference('auto')"
+        [ngClass]="isThemePreference('auto')
+          ? (resolvedTheme() === 'dark' ? 'border-blue-400 bg-blue-950/60 text-blue-200' : 'border-blue-500 bg-blue-50 text-blue-700')
+          : (resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-200 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50')"
+        class="rounded border cursor-pointer px-1.5 py-[1px] text-[10px] font-medium shadow-[inset_0_1px_0_rgba(255,255,255,0.75)] transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+        (click)="setThemePreference('auto')"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="12" rx="1.8"></rect>
+          <path d="M8 20h8M12 17v3"></path>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Graphique waterfall (Chart.js) : masqué si aucune ligne -->
+  <div
+    class="np-chart-shell flex max-h-[min(42vh,22rem)] min-h-[140px] shrink-0 flex-col overflow-hidden border-b border-neutral-300/90 bg-white">
+    @if (rows().length > 0) {
+    <app-network-chart [rows]="rows()" />
+    }
+  </div>
+
+  <!-- Tableau (scroll vertical / horizontal si beaucoup de lignes ou colonnes larges) -->
+  <div
+    class="np-table-wrap inspector-scrollbar min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-auto overscroll-contain bg-white [scrollbar-gutter:stable]"
+  >
+    <table class="np-table w-full table-fixed border-collapse text-left" [style.--w-name.px]="colWidths().name"
+      [style.--w-status.px]="colWidths().status" [style.--w-type.px]="colWidths().type"
+      [style.--w-init.px]="colWidths().initiator" [style.--w-size.px]="colWidths().size"
+      [style.--w-time.px]="colWidths().time">
+      <thead>
+        <!-- En-têtes : tri au clic ; poignée à droite pour redimensionner la colonne -->
+        <tr class="np-head-row shadow-[0_1px_0_0_rgba(0,0,0,0.08)]">
+          <!-- <th
+            class="sticky top-0 z-10 h-7 w-[28px] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 text-center text-[10px] font-bold uppercase tracking-wider text-neutral-600">
+            C
+          </th> -->
+          <th
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-name,280px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
+              (click)="sortBy('name')">
+              Name
+            </button>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
+              (pointerdown)="onColResizeStart($event, 'name')"></span>
+          </th>
+          <th
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-status,220px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
+              (click)="sortBy('status')">
+              Status
+            </button>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
+              (pointerdown)="onColResizeStart($event, 'status')"></span>
+          </th>
+          <th
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-type,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
+              (click)="sortBy('type')">
+              Type
+            </button>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
+              (pointerdown)="onColResizeStart($event, 'type')"></span>
+          </th>
+          <th
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-init,160px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
+              (click)="sortBy('initiator')">
+              Initiator
+            </button>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
+              (pointerdown)="onColResizeStart($event, 'initiator')"></span>
+          </th>
+          <th
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-size,88px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
+              (click)="sortBy('size')">
+              Size
+            </button>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
+              (pointerdown)="onColResizeStart($event, 'size')"></span>
+          </th>
+          <th
+            class="relative sticky top-0 z-10 h-7 w-[var(--w-time,72px)] select-none border-b border-neutral-300 border-r border-neutral-200 bg-gradient-to-b from-[#fbfbfc] to-[#eceff3] p-0 align-middle text-[10px] font-bold uppercase tracking-wider text-neutral-600 last:border-r-0">
+            <button type="button"
+              class="w-[calc(100%-6px)] cursor-pointer appearance-none border-0 bg-transparent px-2 py-1.5 text-left font-inherit text-inherit transition-colors hover:bg-black/[0.05] focus-visible:bg-blue-50/70 focus-visible:outline-none"
+              (click)="sortBy('timeMs')">
+              Time
+            </button>
+            <span class="absolute bottom-0 right-0 top-0 z-20 w-[5px] cursor-col-resize hover:bg-blue-500/15 active:bg-blue-500/20"
+              (pointerdown)="onColResizeStart($event, 'time')"></span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Ligne : clic ouvre le détail ; erreur = pastille rouge + texte rouge -->
+        @for (row of rows(); track row.id) {
+        <tr
+          class="np-data-row cursor-pointer border-b border-neutral-100/90 transition-colors hover:bg-blue-50/60 even:bg-[#fafbfc]"
+          (click)="onRowClick(row)">
+          <!-- <td class="border-r border-neutral-100/90 px-1 text-center align-middle">
+            <input
+              type="checkbox"
+              [checked]="isSelectedForCompare(row)"
+              (click)="$event.stopPropagation()"
+              (change)="toggleCompareSelection(row)"
+            />
+          </td> -->
+          <!-- Nom + indicateur d’échec -->
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle last:border-r-0">
+            <!-- @if (row.statusFailed) {
+            <span class="mr-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full bg-[#c5221f] align-middle shadow-sm"
+              aria-hidden="true"></span>
+            } -->
+            <span class="align-middle font-medium text-neutral-900/95">{{
+              row.name
+              }}</span>
+            <!-- @if (row.alertFlags.error || row.alertFlags.slow || row.alertFlags.large) {
+            <span class="ml-1 rounded bg-amber-100 px-1 py-[1px] text-[9px] font-semibold text-amber-700">ALERT</span>
+            } -->
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle text-[11px] last:border-r-0">
+            <span [ngClass]="row.alertFlags.error
+              ? (resolvedTheme() === 'dark' ? 'font-semibold text-red-300' : 'font-semibold text-[#c5221f]')
+              : ''">
+            {{ row.status }}
+            </span>
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle text-[11px] text-neutral-700 last:border-r-0">
+            {{ row.type }}
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle text-[11px] text-[#1a73e8] no-underline hover:underline underline-offset-2 last:border-r-0">
+            {{ row.initiator }}
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800/95 last:border-r-0">
+            {{ row.size }}
+          </td>
+          <td
+            class="overflow-hidden text-ellipsis whitespace-nowrap border-b border-neutral-100/90 border-r border-neutral-100/90 px-2 py-[5px] align-middle font-mono text-[11px] tabular-nums text-neutral-800/95 last:border-r-0">
+            {{ (row.timeMs / 1000) | number: '1.2-2' }} s
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Résumé : compteurs, transfert, fin de chargement, DCL / Load -->
+  <footer
+    class="np-footer flex shrink-0 flex-wrap items-center gap-y-1 border-t px-2 py-1.5 text-[11px] shadow-[inset_0_1px_0_0_rgba(255,255,255,0.75)]"
+    [ngClass]="resolvedTheme() === 'dark'
+      ? 'border-slate-700/80 bg-gradient-to-b from-slate-900 to-slate-950 text-slate-300 shadow-none'
+      : 'border-neutral-300/90 bg-gradient-to-b from-[#f4f6f8] to-[#e7eaee] text-neutral-700'"
+  >
+    <span class="tabular-nums">{{ footerStats().shown }} / {{ footerStats().total }} requêtes</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
+    <span class="tabular-nums">{{ footerStats().transferredKb }} kB transférés</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">/</span>
+    <span class="tabular-nums">{{ footerStats().resourcesKb }} kB ressources</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
+    <span class="tabular-nums">Terminé : {{ footerStats().finishMs }} s</span>
+    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
+    <span class="tabular-nums">Alertes : {{ footerStats().alerts }}</span>
+  </footer>
+</div>
