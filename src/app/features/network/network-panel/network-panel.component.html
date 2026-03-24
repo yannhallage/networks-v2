@@ -35,6 +35,17 @@
     >
       Comparer (2)
     </button>
+    <button
+      type="button"
+      class="ml-2 rounded border px-2 py-[1px] text-[10px] font-medium"
+      [ngClass]="resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
+      [disabled]="requestsSignal().length === 0"
+      title="Vider la liste des requêtes capturées"
+      aria-label="Nettoyer le panneau Network"
+      (click)="clearPanel()"
+    >
+      Nettoyer
+    </button>
     <div class="ml-auto flex items-center gap-1">
       <button
         type="button"
@@ -248,15 +259,5 @@
     <span class="tabular-nums">Terminé : {{ footerStats().finishMs }} s</span>
     <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
     <span class="tabular-nums">Alertes : {{ footerStats().alerts }}</span>
-    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
-    <span>
-      <span class="font-semibold text-[#1a73e8]">DOMContentLoaded</span>
-      : {{ domContentLoadedMs }} ms
-    </span>
-    <span class="mx-1.5" [ngClass]="resolvedTheme() === 'dark' ? 'text-slate-500' : 'text-neutral-400'">|</span>
-    <span>
-      <span class="font-semibold text-[#d93025]">Load</span>
-      : {{ loadEventSeconds() }} s
-    </span>
   </footer>
 </div>

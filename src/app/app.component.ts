@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   Component,
   HostListener,
@@ -16,7 +15,7 @@ import { WebSocketService } from './core/websocket.service';
 
 @Component({
   selector: 'app-root',
-  imports: [AsyncPipe, NetworkPanelComponent, RequestDetailComponent],
+  imports: [NetworkPanelComponent, RequestDetailComponent],
   templateUrl: './app.component.html',
   host: {
     class:
@@ -28,7 +27,6 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly store = inject(NetworkStore);
   private readonly destroy$ = new Subject<void>();
 
-  readonly requests$ = this.store.requests$;
   selected: NetworkRequest | null = null;
   comparePair: [NetworkRequest, NetworkRequest] | null = null;
 
@@ -41,12 +39,14 @@ export class AppComponent implements OnInit, OnDestroy {
     this.ws.messages$
       .pipe(
         filter(
-          (m): m is { type: 'network_request'; payload: NetworkRequest } =>
-            m.type === 'network_request' && m.payload != null,
+          (m: any) =>
+            m?.type === 'network_request' && m.payload != null,
         ),
         takeUntil(this.destroy$),
       )
-      .subscribe((m) => this.store.addRequest(m.payload));
+      .subscribe((m: any) =>
+        this.store.addRequest(m.payload as NetworkRequest),
+      );
   }
 
   ngOnDestroy(): void {
@@ -66,6 +66,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onSessionImported(requests: NetworkRequest[]): void {
     this.store.setRequests(requests);
+    this.selected = null;
+    this.comparePair = null;
+  }
+
+  onPanelCleared(): void {
     this.selected = null;
     this.comparePair = null;
   }
