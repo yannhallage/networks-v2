@@ -1,0 +1,107 @@
+<div class="mt-2">
+  <div class="flex items-center justify-between gap-2">
+    <span class="text-[11px] font-semibold">Query params</span>
+
+    <button
+      type="button"
+      class="h-7 rounded cursor-pointer border px-2 text-[11px] font-semibold"
+      [ngClass]="
+        theme === 'dark'
+          ? 'border-slate-600 bg-slate-900 hover:bg-slate-800 text-slate-100'
+          : 'border-neutral-300 bg-white hover:bg-neutral-100 text-neutral-800'
+      "
+      (click)="addParam()"
+    >
+      Add param
+    </button>
+  </div>
+
+  <div
+    class="mt-3 grid grid-cols-[36px_1fr_1fr_1.4fr_36px] gap-2 border-b pb-2 text-[11px] font-medium"
+    [ngClass]="theme === 'dark' ? 'border-slate-700 text-slate-300' : 'border-neutral-200 text-neutral-500'"
+  >
+    <span class="text-center">On</span>
+    <span>Key</span>
+    <span>Value</span>
+    <span>Description</span>
+    <span></span>
+  </div>
+
+  <div class="mt-2 max-h-[220px] overflow-y-auto pr-1 grid gap-2">
+    @for (p of params(); track p.id) {
+    <div
+      class="grid grid-cols-[36px_1fr_1fr_1.4fr_36px] items-center gap-2"
+      [ngClass]="theme === 'dark' ? 'bg-slate-900/30' : 'bg-neutral-50'"
+    >
+      <input
+        type="checkbox"
+        class="accent-blue-600"
+        [checked]="p.enabled"
+        (change)="setEnabled(p.id, $any($event.target).checked)"
+      />
+
+      <input
+        type="text"
+        class="h-7 w-full rounded border px-2 text-[11px] outline-none"
+        [ngClass]="
+          theme === 'dark'
+            ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-400'
+            : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'
+        "
+        [value]="p.key"
+        placeholder="key"
+        (input)="setKey(p.id, $any($event.target).value)"
+      />
+
+      <input
+        type="text"
+        class="h-7 w-full rounded border px-2 text-[11px] outline-none"
+        [ngClass]="
+          theme === 'dark'
+            ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-400'
+            : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'
+        "
+        [value]="p.value"
+        placeholder="value"
+        (input)="setValue(p.id, $any($event.target).value)"
+      />
+
+      <input
+        type="text"
+        class="h-7 w-full rounded border px-2 text-[11px] outline-none"
+        [ngClass]="
+          theme === 'dark'
+            ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-400'
+            : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'
+        "
+        [value]="p.description"
+        placeholder="description"
+        (input)="setDescription(p.id, $any($event.target).value)"
+      />
+
+      <button
+        type="button"
+        class="h-7 w-9 rounded border text-[11px]"
+        [ngClass]="
+          theme === 'dark'
+            ? 'border-slate-600 bg-slate-900 hover:bg-slate-800 text-slate-100'
+            : 'border-neutral-300 bg-white hover:bg-neutral-100 text-neutral-800'
+        "
+        (click)="removeParam(p.id)"
+        aria-label="remove param"
+      >
+        ×
+      </button>
+    </div>
+    }
+
+    @if (params().length === 0) {
+    <div
+      class="rounded border border-dashed p-3 text-[11px]"
+      [ngClass]="theme === 'dark' ? 'border-slate-700 text-slate-400' : 'border-neutral-200 text-neutral-500'"
+    >
+      Aucun paramètre. Clique sur <span class="font-semibold">Add param</span>.
+    </div>
+    }
+  </div>
+</div>

@@ -445,3 +445,19 @@
     transform: scale(0.01);
   }
 }
+
+.api-tester-sheet {
+  height: min(88vh, 860px);
+  animation: api-tester-slide-up 220ms ease-out;
+}
+
+@keyframes api-tester-slide-up {
+  from {
+    transform: translateY(36px);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
