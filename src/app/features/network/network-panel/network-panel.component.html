@@ -11,7 +11,7 @@
     <span class="select-none">Network</span>
     <button
       type="button"
-      class="ml-2 rounded border px-2 py-[1px] text-[10px] font-medium"
+      class="ml-2 cursor-pointer rounded border px-2 py-[1px] text-[10px] font-medium"
       [ngClass]="resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
       (click)="exportSession()"
     >
@@ -26,7 +26,7 @@
     </label>
     <button
       type="button"
-      class="rounded border px-2 py-[1px] text-[10px] font-medium"
+      class="cursor-pointer rounded border px-2 py-[1px] text-[10px] font-medium"
       [ngClass]="canCompare()
         ? (resolvedTheme() === 'dark' ? 'border-blue-400 bg-blue-950/60 text-blue-200' : 'border-blue-500 bg-blue-50 text-blue-700')
         : (resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-500' : 'border-neutral-300 bg-white text-neutral-400')"
@@ -37,14 +37,27 @@
     </button>
     <button
       type="button"
-      class="ml-2 rounded border px-2 py-[1px] text-[10px] font-medium"
+      class="ml-2 cursor-pointer rounded border px-2 py-[1px] text-[10px] font-medium"
       [ngClass]="resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
-      [disabled]="requestsSignal().length === 0"
+    >
+      TestApi
+    </button>
+    <button
+      type="button"
+      class="relative ml-2 inline-flex min-w-[72px] cursor-pointer items-center justify-center overflow-hidden rounded border px-2 py-[1px] text-[10px] font-medium"
+      [ngClass]="resolvedTheme() === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100 hover:bg-slate-800' : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50'"
+      [disabled]="requestsSignal().length === 0 || isClearing()"
       title="Vider la liste des requêtes capturées"
       aria-label="Nettoyer le panneau Network"
-      (click)="clearPanel()"
+      (click)="clearPanelWithLoader()"
     >
+      @if (isClearing()) {
+      <span class="np-clear-loader" aria-label="Chargement">
+        <span></span><span></span><span></span>
+      </span>
+      } @else {
       Nettoyer
+      }
     </button>
     <div class="ml-auto flex items-center gap-1">
       <button

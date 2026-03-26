@@ -58,6 +58,7 @@ export class NetworkPanelComponent implements OnInit, OnDestroy {
   readonly sortKey = signal<keyof NetworkRowView | 'name'>('startMs');
   readonly sortDir = signal<'asc' | 'desc'>('asc');
   readonly selectedCompareIds = signal<string[]>([]);
+  readonly isClearing = signal(false);
   readonly themePreference = signal<ThemePreference>('auto');
   readonly resolvedTheme = computed<'light' | 'dark'>(() => {
     const pref = this.themePreference();
@@ -229,6 +230,17 @@ export class NetworkPanelComponent implements OnInit, OnDestroy {
     this.store.setRequests([]);
     this.selectedCompareIds.set([]);
     this.panelCleared.emit();
+  }
+
+  clearPanelWithLoader(): void {
+    if (this.isClearing() || this.requestsSignal().length === 0) {
+      return;
+    }
+    this.isClearing.set(true);
+    window.setTimeout(() => {
+      this.clearPanel();
+      this.isClearing.set(false);
+    }, 900);
   }
 
   exportSession(): void {
