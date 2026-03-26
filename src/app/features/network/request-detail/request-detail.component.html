@@ -1,7 +1,18 @@
 @if (request(); as req) {
 <div
-  class="rd-root flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white font-sans text-[11px] text-neutral-800 antialiased"
+  class="rd-root relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white font-sans text-[11px] text-neutral-800 antialiased"
 >
+  @if (toastMessage(); as message) {
+  <div
+    class="rd-toast"
+    [class.rd-toast-success]="toastKind() === 'success'"
+    [class.rd-toast-error]="toastKind() === 'error'"
+    role="status"
+    aria-live="polite"
+  >
+    {{ message }}
+  </div>
+  }
   <div
     class="rd-tablist flex shrink-0 items-end border-b border-neutral-300 bg-white pl-0 pr-1 pt-0"
     role="tablist"
@@ -32,10 +43,12 @@
     <div class="ml-auto flex items-center gap-1 pb-0.5">
       <button
         type="button"
-        title="Copier URL"
-        aria-label="Copier URL"
-        class="inline-flex h-5 cursor-pointer w-5 items-center justify-center rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
-        (click)="copyUrl()"
+        title="Copier JSON réponse"
+        aria-label="Copier JSON réponse"
+        [attr.aria-pressed]="activeAction() === 'copy-response-json'"
+        [class.detail-action-btn-active]="activeAction() === 'copy-response-json'"
+        class="detail-action-btn"
+        (click)="copyResponseJson()"
       >
         <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="9" y="9" width="10" height="10" rx="2"></rect>
@@ -44,9 +57,28 @@
       </button>
       <button
         type="button"
+        title="Copier URL"
+        aria-label="Copier URL"
+        [attr.aria-pressed]="activeAction() === 'copy-url'"
+        [class.detail-action-btn-active]="activeAction() === 'copy-url'"
+        class="detail-action-btn"
+        (click)="copyUrl()"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10 14 21 3"></path>
+          <path d="M14 3h7v7"></path>
+          <path d="M5 5h6"></path>
+          <path d="M5 10h6"></path>
+          <path d="M5 15h4"></path>
+        </svg>
+      </button>
+      <button
+        type="button"
         title="Copier cURL"
         aria-label="Copier cURL"
-        class="inline-flex h-5 cursor-pointer w-5 items-center justify-center rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+        [attr.aria-pressed]="activeAction() === 'copy-curl'"
+        [class.detail-action-btn-active]="activeAction() === 'copy-curl'"
+        class="detail-action-btn"
         (click)="copyCurl()"
       >
         <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -59,7 +91,9 @@
         type="button"
         title="Rejouer"
         aria-label="Rejouer"
-        class="inline-flex h-5 cursor-pointer w-5 items-center justify-center rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+        [attr.aria-pressed]="activeAction() === 'replay'"
+        [class.detail-action-btn-active]="activeAction() === 'replay'"
+        class="detail-action-btn"
         (click)="replayRequest()"
       >
         <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -71,7 +105,9 @@
         type="button"
         title="Ouvrir"
         aria-label="Ouvrir"
-        class="inline-flex h-5 cursor-pointer w-5 items-center justify-center rounded border border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+        [attr.aria-pressed]="activeAction() === 'open'"
+        [class.detail-action-btn-active]="activeAction() === 'open'"
+        class="detail-action-btn"
         (click)="openInNewTab()"
       >
         <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
