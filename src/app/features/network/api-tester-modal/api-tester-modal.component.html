@@ -4,7 +4,7 @@
   (click)="close()"
 >
   <section
-    class="api-tester-sheet flex w-[min(2320px,100vw)] max-w-[1120px] min-w-[320px] flex-col overflow-hidden rounded-t-xl border shadow-2xl"
+    class="api-tester-sheet flex max-h-[90vh] w-[min(2320px,100vw)] max-w-[1120px] min-w-[320px] flex-col overflow-hidden rounded-t-xl border shadow-2xl"
     [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-950 text-slate-100' : 'border-neutral-300 bg-white text-neutral-800'"
     (click)="$event.stopPropagation()"
     role="dialog"
@@ -58,7 +58,6 @@
           class="flex h-10 shrink-0 items-center gap-1 border-b px-2"
           [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900' : 'border-neutral-200 bg-white'"
         >
-          <span class="mr-2 text-[11px]" [ngClass]="theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'">Docs</span>
           @for (tab of tabs; track tab.id) {
           <button
             type="button"
@@ -73,8 +72,10 @@
           }
         </div>
 
-        <div class="min-h-0 flex-1 overflow-auto p-3">
-          @switch (activeTab()) { @case ('params') {
+        <div class="min-h-0 flex-1 overflow-hidden p-3">
+          @switch (activeTab()) { @case ('docs') {
+          <app-api-tester-docs-item class="block h-full" [theme]="theme" />
+          } @case ('params') {
           <app-api-tester-params-item [theme]="theme" />
           } @case ('authorization') {
           <app-api-tester-authorization-item [theme]="theme" />
@@ -90,7 +91,7 @@
         </div>
       </div>
 
-      <div class="min-h-[240px] max-h-[48%] shrink-0 overflow-hidden">
+      <!-- <div class="min-h-[240px] max-h-[48%] shrink-0 overflow-hidden">
         <div
           class="flex h-10 items-center justify-between border-b px-3 text-[11px] font-semibold"
           [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900' : 'border-neutral-200 bg-white'"
@@ -106,7 +107,7 @@
             Send request to get a response
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </section>
 </div>
