@@ -1,6 +1,394 @@
 <div
-  class="rounded border p-3 text-[11px]"
-  [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900/60 text-slate-200' : 'border-neutral-200 bg-neutral-50 text-neutral-700'"
+  class="flex h-full min-h-0 min-w-0 flex-1 flex-col gap-1 overflow-hidden text-[11px]"
+  [ngClass]="theme === 'dark' ? 'text-slate-200' : 'text-neutral-700'"
 >
-  Composant Body: editeur de payload (raw, json, form-data, x-www-form-urlencoded).
+  <div class="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1">
+    @for (opt of bodyModeOptions; track opt.value) {
+    <label class="inline-flex cursor-pointer items-center gap-1.5">
+      <input
+        type="radio"
+        name="apiTesterBodyMode"
+        class="accent-blue-600"
+        [value]="opt.value"
+        [checked]="bodyMode() === opt.value"
+        (change)="setBodyMode(opt.value)"
+      />
+      <span [ngClass]="bodyMode() === opt.value ? (theme === 'dark' ? 'text-blue-300' : 'text-blue-700') : ''">
+        {{ opt.label }}
+      </span>
+    </label>
+    }
+
+    @if (bodyMode() === 'raw') {
+    <div class="flex items-center gap-1.5">
+      <!-- <label class="font-medium text-[11px]" [ngClass]="theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'">
+        Format :
+      </label> -->
+      <select
+        class="h-7 rounded border px-2 text-[11px] font-medium"
+        [ngClass]="
+          theme === 'dark'
+            ? 'border-slate-600 bg-slate-900 text-blue-300'
+            : 'border-neutral-300 bg-white text-blue-700'
+        "
+        [value]="rawFormat()"
+        (change)="setRawFormat($any($event.target).value)"
+      >
+        @for (rf of rawFormatOptions; track rf.value) {
+        <option [value]="rf.value">{{ rf.label }}</option>
+        }
+      </select>
+    </div>
+    }
+
+    <div class="ml-auto flex flex-wrap items-center gap-3">
+      <button
+        type="button"
+        class="cursor-pointer border-0 bg-transparent p-0 text-[11px] underline"
+        [ngClass]="theme === 'dark' ? 'text-slate-300 hover:text-slate-100' : 'text-neutral-600 hover:text-neutral-900'"
+        (click)="onSchemaClick()"
+      >
+        Schema
+      </button>
+      <button
+        type="button"
+        class="cursor-pointer border-0 bg-transparent p-0 text-[11px] underline disabled:cursor-not-allowed disabled:opacity-40"
+        [ngClass]="theme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-800'"
+        [disabled]="!canBeautify()"
+        (click)="beautify()"
+      >
+        Beautify
+      </button>
+      <button
+        type="button"
+        class="cursor-pointer border-0 bg-transparent p-0 text-[11px] underline"
+        [ngClass]="theme === 'dark' ? 'text-slate-300 hover:text-slate-100' : 'text-neutral-600 hover:text-neutral-900'"
+        (click)="onCookiesClick()"
+      >
+        Cookies
+      </button>
+    </div>
+  </div>
+
+  @switch (bodyMode()) { @case ('none') {
+  <div
+    class="flex min-h-0 flex-1 items-center justify-center rounded border border-dashed px-3 py-8 text-center"
+    [ngClass]="theme === 'dark' ? 'border-slate-700 text-slate-400' : 'border-neutral-200 text-neutral-500'"
+  >
+    Aucun corps de requête. Choisis un autre mode ci-dessus.
+  </div>
+  } @case ('raw') {
+  <div
+    class="flex min-h-0 min-w-0 flex-1 overflow-hidden rounded border"
+    [ngClass]="theme === 'dark' ? 'border-slate-600 bg-slate-950' : 'border-neutral-300 bg-white'"
+  >
+    <div
+      class="relative w-9 shrink-0 overflow-hidden border-r"
+      [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900/80' : 'border-neutral-200 bg-neutral-50'"
+    >
+      <div
+        class="select-none py-1.5 pl-1 pr-2 text-right font-mono text-[11px] leading-4"
+        [ngClass]="theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'"
+        [style.transform]="'translateY(-' + rawScrollTop() + 'px)'"
+      >
+        @for (n of rawLineCount(); track n) {
+        <div class="h-4 leading-4">{{ n }}</div>
+        }
+      </div>
+    </div>
+    <textarea
+      class="min-h-0 min-w-0 flex-1 resize-none border-0 bg-transparent py-1.5 pr-2 font-mono text-[11px] leading-4 outline-none"
+      [ngClass]="
+        theme === 'dark'
+          ? 'text-slate-100 placeholder:text-slate-500'
+          : 'text-neutral-800 placeholder:text-neutral-400'
+      "
+      placeholder="Contenu brut…"
+      [value]="rawContent()"
+      (input)="setRawContent($any($event.target).value)"
+      (scroll)="onRawScroll($any($event.target).scrollTop)"
+      spellcheck="false"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+    ></textarea>
+  </div>
+  } @case ('graphql') {
+  <div class="flex min-h-0 flex-1 flex-col gap-1 overflow-hidden">
+    <span class="shrink-0 font-medium" [ngClass]="theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'">Query</span>
+    <div
+      class="flex min-h-0 min-w-0 flex-1 overflow-hidden rounded border"
+      [ngClass]="theme === 'dark' ? 'border-slate-600 bg-slate-950' : 'border-neutral-300 bg-white'"
+    >
+      <div
+        class="relative w-9 shrink-0 overflow-hidden border-r"
+        [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900/80' : 'border-neutral-200 bg-neutral-50'"
+      >
+        <div
+          class="select-none py-1.5 pl-1 pr-2 text-right font-mono text-[11px] leading-4"
+          [ngClass]="theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'"
+          [style.transform]="'translateY(-' + graphqlScrollTop() + 'px)'"
+        >
+          @for (n of graphqlLineCount(); track n) {
+          <div class="h-4 leading-4">{{ n }}</div>
+          }
+        </div>
+      </div>
+      <textarea
+        class="min-h-0 min-w-0 flex-1 resize-none border-0 bg-transparent py-1.5 pr-2 font-mono text-[11px] leading-4 outline-none"
+        [ngClass]="
+          theme === 'dark'
+            ? 'text-slate-100 placeholder:text-slate-500'
+            : 'text-neutral-800 placeholder:text-neutral-400'
+        "
+        placeholder="query { … }"
+        [value]="graphqlQuery()"
+        (input)="setGraphqlQuery($any($event.target).value)"
+        (scroll)="onGraphqlScroll($any($event.target).scrollTop)"
+        spellcheck="false"
+        autocomplete="off"
+      ></textarea>
+    </div>
+    <span class="shrink-0 font-medium" [ngClass]="theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'">Variables (JSON)</span>
+    <div
+      class="flex h-[min(120px,18vh)] min-h-[72px] shrink-0 overflow-hidden rounded border"
+      [ngClass]="theme === 'dark' ? 'border-slate-600 bg-slate-950' : 'border-neutral-300 bg-white'"
+    >
+      <div
+        class="relative w-9 shrink-0 overflow-hidden border-r"
+        [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900/80' : 'border-neutral-200 bg-neutral-50'"
+      >
+        <div
+          class="select-none py-1.5 pl-1 pr-2 text-right font-mono text-[11px] leading-4"
+          [ngClass]="theme === 'dark' ? 'text-slate-500' : 'text-neutral-400'"
+          [style.transform]="'translateY(-' + graphqlVarsScrollTop() + 'px)'"
+        >
+          @for (n of graphqlVarsLineCount(); track n) {
+          <div class="h-4 leading-4">{{ n }}</div>
+          }
+        </div>
+      </div>
+      <textarea
+        class="min-h-0 min-w-0 flex-1 resize-none border-0 bg-transparent py-1.5 pr-2 font-mono text-[11px] leading-4 outline-none"
+        [ngClass]="
+          theme === 'dark'
+            ? 'text-slate-100 placeholder:text-slate-500'
+            : 'text-neutral-800 placeholder:text-neutral-400'
+        "
+        placeholder="{}"
+        [value]="graphqlVariables()"
+        (input)="setGraphqlVariables($any($event.target).value)"
+        (scroll)="onGraphqlVarsScroll($any($event.target).scrollTop)"
+        spellcheck="false"
+        autocomplete="off"
+      ></textarea>
+    </div>
+  </div>
+  } @case ('binary') {
+  <div
+    class="flex min-h-[120px] flex-col gap-3 rounded border border-dashed p-4"
+    [ngClass]="theme === 'dark' ? 'border-slate-600 bg-slate-900/40' : 'border-neutral-300 bg-neutral-50'"
+  >
+    <label
+      class="inline-flex h-8 cursor-pointer items-center justify-center rounded border px-3 text-[11px] font-semibold"
+      [ngClass]="
+        theme === 'dark'
+          ? 'border-slate-600 bg-slate-900 hover:bg-slate-800'
+          : 'border-neutral-300 bg-white hover:bg-neutral-100'
+      "
+    >
+      <span>Choisir un fichier</span>
+      <input #binaryFileInput type="file" class="sr-only" (change)="onBinarySelected($event)" />
+    </label>
+    @if (binaryFile(); as f) {
+    <div class="flex flex-wrap items-center gap-2">
+      <span [ngClass]="theme === 'dark' ? 'text-slate-300' : 'text-neutral-700'">{{ f.name }}</span>
+      <button
+        type="button"
+        class="h-7 rounded border px-2 text-[11px]"
+        [ngClass]="
+          theme === 'dark'
+            ? 'border-slate-600 bg-slate-900 hover:bg-slate-800'
+            : 'border-neutral-300 bg-white hover:bg-neutral-100'
+        "
+        (click)="clearBinary()"
+      >
+        Retirer
+      </button>
+    </div>
+    }
+  </div>
+  } @case ('form-data') {
+  <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+    <div class="mb-1 shrink-0 flex items-center justify-end">
+      <button
+        type="button"
+        class="h-7 rounded cursor-pointer border px-2 text-[11px] font-semibold"
+        [ngClass]="
+          theme === 'dark'
+            ? 'border-slate-600 bg-slate-900 hover:bg-slate-800 text-slate-100'
+            : 'border-neutral-300 bg-white hover:bg-neutral-100 text-neutral-800'
+        "
+        (click)="addFormRow()"
+      >
+        Ajouter un champ
+      </button>
+    </div>
+    <div
+      class="grid shrink-0 grid-cols-[36px_1fr_1fr_36px] gap-2 border-b pb-1.5 text-[11px] font-medium"
+      [ngClass]="theme === 'dark' ? 'border-slate-700 text-slate-300' : 'border-neutral-200 text-neutral-500'"
+    >
+      <span class="text-center">Actif</span>
+      <span>Clé</span>
+      <span>Valeur</span>
+      <span></span>
+    </div>
+    <div class="mt-1 min-h-0 flex-1 grid gap-1.5 overflow-y-auto pr-1">
+      @for (r of formRows(); track r.id) {
+      <div
+        class="grid grid-cols-[36px_1fr_1fr_36px] items-center gap-1.5"
+        [ngClass]="theme === 'dark' ? 'bg-slate-900/30' : 'bg-neutral-50'"
+      >
+        <input
+          type="checkbox"
+          class="accent-blue-600"
+          [checked]="r.enabled"
+          (change)="setFormEnabled(r.id, $any($event.target).checked)"
+        />
+        <input
+          type="text"
+          class="h-7 w-full rounded border px-2 text-[11px] outline-none"
+          [ngClass]="
+            theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-400'
+              : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'
+          "
+          [value]="r.key"
+          placeholder="name"
+          (input)="setFormKey(r.id, $any($event.target).value)"
+        />
+        <input
+          type="text"
+          class="h-7 w-full rounded border px-2 text-[11px] outline-none"
+          [ngClass]="
+            theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-400'
+              : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'
+          "
+          [value]="r.value"
+          placeholder="value"
+          (input)="setFormValue(r.id, $any($event.target).value)"
+        />
+        <button
+          type="button"
+          class="h-7 w-9 cursor-pointer rounded border text-[11px]"
+          [ngClass]="
+            theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 hover:bg-slate-800'
+              : 'border-neutral-300 bg-white hover:bg-neutral-100'
+          "
+          (click)="removeFormRow(r.id)"
+          aria-label="Supprimer le champ"
+        >
+          ×
+        </button>
+      </div>
+      }
+      @if (formRows().length === 0) {
+      <div
+        class="rounded border border-dashed p-3 text-[11px]"
+        [ngClass]="theme === 'dark' ? 'border-slate-700 text-slate-400' : 'border-neutral-200 text-neutral-500'"
+      >
+        Aucun champ. Utilise <span class="font-semibold">Ajouter un champ</span>.
+      </div>
+      }
+    </div>
+  </div>
+  } @case ('x-www-form-urlencoded') {
+  <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+    <div class="mb-1 shrink-0 flex items-center justify-end">
+      <button
+        type="button"
+        class="h-7 rounded cursor-pointer border px-2 text-[11px] font-semibold"
+        [ngClass]="
+          theme === 'dark'
+            ? 'border-slate-600 bg-slate-900 hover:bg-slate-800 text-slate-100'
+            : 'border-neutral-300 bg-white hover:bg-neutral-100 text-neutral-800'
+        "
+        (click)="addUrlEncodedRow()"
+      >
+        Ajouter un champ
+      </button>
+    </div>
+    <div
+      class="grid shrink-0 grid-cols-[36px_1fr_1fr_36px] gap-2 border-b pb-1.5 text-[11px] font-medium"
+      [ngClass]="theme === 'dark' ? 'border-slate-700 text-slate-300' : 'border-neutral-200 text-neutral-500'"
+    >
+      <span class="text-center">Actif</span>
+      <span>Clé</span>
+      <span>Valeur</span>
+      <span></span>
+    </div>
+    <div class="mt-1 min-h-0 flex-1 grid gap-1.5 overflow-y-auto pr-1">
+      @for (r of urlEncodedRows(); track r.id) {
+      <div
+        class="grid grid-cols-[36px_1fr_1fr_36px] items-center gap-1.5"
+        [ngClass]="theme === 'dark' ? 'bg-slate-900/30' : 'bg-neutral-50'"
+      >
+        <input
+          type="checkbox"
+          class="accent-blue-600"
+          [checked]="r.enabled"
+          (change)="setUrlEncodedEnabled(r.id, $any($event.target).checked)"
+        />
+        <input
+          type="text"
+          class="h-7 w-full rounded border px-2 text-[11px] outline-none"
+          [ngClass]="
+            theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-400'
+              : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'
+          "
+          [value]="r.key"
+          placeholder="key"
+          (input)="setUrlEncodedKey(r.id, $any($event.target).value)"
+        />
+        <input
+          type="text"
+          class="h-7 w-full rounded border px-2 text-[11px] outline-none"
+          [ngClass]="
+            theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-400'
+              : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'
+          "
+          [value]="r.value"
+          placeholder="value"
+          (input)="setUrlEncodedValue(r.id, $any($event.target).value)"
+        />
+        <button
+          type="button"
+          class="h-7 w-9 cursor-pointer rounded border text-[11px]"
+          [ngClass]="
+            theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 hover:bg-slate-800'
+              : 'border-neutral-300 bg-white hover:bg-neutral-100'
+          "
+          (click)="removeUrlEncodedRow(r.id)"
+          aria-label="Supprimer le champ"
+        >
+          ×
+        </button>
+      </div>
+      }
+      @if (urlEncodedRows().length === 0) {
+      <div
+        class="rounded border border-dashed p-3 text-[11px]"
+        [ngClass]="theme === 'dark' ? 'border-slate-700 text-slate-400' : 'border-neutral-200 text-neutral-500'"
+      >
+        Aucun champ encodé. Utilise <span class="font-semibold">Ajouter un champ</span>.
+      </div>
+      }
+    </div>
+  </div>
+  } }
 </div>

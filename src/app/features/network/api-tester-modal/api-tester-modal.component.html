@@ -4,7 +4,7 @@
   (click)="close()"
 >
   <section
-    class="api-tester-sheet flex w-[min(2320px,100vw)] max-w-[1120px] min-w-[320px] flex-col overflow-hidden rounded-t-xl border shadow-2xl"
+    class="api-tester-sheet flex max-h-[90vh] w-[min(2320px,100vw)] max-w-[1120px] min-w-[320px] flex-col overflow-hidden rounded-t-xl border shadow-2xl"
     [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-950 text-slate-100' : 'border-neutral-300 bg-white text-neutral-800'"
     (click)="$event.stopPropagation()"
     role="dialog"
@@ -12,53 +12,79 @@
     aria-label="API Tester"
   >
     <header
-      class="flex h-11 shrink-0 items-center gap-2 border-b px-3"
-      [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900' : 'border-neutral-200 bg-neutral-50'"
+      class="flex shrink-0 items-center gap-2.5 border-b px-3 py-2.5"
+      [ngClass]="theme === 'dark' ? 'border-slate-800 bg-slate-900/70' : 'border-neutral-200 bg-neutral-50'"
     >
-      <select
-        class="h-7 rounded border px-2 text-[11px] font-semibold"
-        [ngClass]="theme === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-neutral-300 bg-white text-neutral-800'"
-        [value]="method()"
-        (change)="setMethod($any($event.target).value)"
-      >
-        @for (httpMethod of methods; track httpMethod) {
-        <option [value]="httpMethod">{{ httpMethod }}</option>
-        }
-      </select>
-
-      <input
-        type="text"
-        placeholder="Enter URL or paste text"
-        class="h-7 min-w-0 flex-1 rounded border px-3 text-[11px] outline-none"
+      <div
+        class="flex min-h-9 min-w-0 flex-1 items-stretch overflow-hidden border transition-shadow focus-within:border-blue-500/50 focus-within:shadow-[0_0_0_3px_rgba(59,130,246,0.15)]"
         [ngClass]="theme === 'dark'
-          ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-400'
-          : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'"
-      />
-
-      <button
-        type="button"
-        class="h-7 rounded cursor-pointer bg-blue-600 px-4 text-[11px] font-semibold text-white hover:bg-blue-700"
+          ? 'border-slate-600 bg-slate-950'
+          : 'border-neutral-300 bg-white shadow-sm'"
       >
-        Send
-      </button>
+        <!-- <label class="sr-only" for="api-tester-method">Méthode HTTP</label> -->
+        <select
+          id="api-tester-method"
+          class="h-9 min-w-[6.75rem] shrink-0 cursor-pointer border-0 border-r px-2.5 text-[11px] font-bold uppercase tracking-wide outline-none"
+          [ngClass]="theme === 'dark'
+            ? 'border-slate-600 bg-slate-900'
+            : 'border-neutral-200 bg-neutral-50'"
+          [style.color]="methodLabelColor(method())"
+          [value]="method()"
+          (change)="setMethod($any($event.target).value)"
+          aria-label="Méthode HTTP"
+        >
+          @for (httpMethod of methods; track httpMethod) {
+          <option [value]="httpMethod" [style.color]="methodLabelColor(httpMethod)">
+            {{ httpMethod }}
+          </option>
+          }
+        </select>
 
-      <button
-        type="button"
-        class="h-7 rounded cursor-pointer border px-2 text-[11px]"
-        [ngClass]="theme === 'dark' ? 'border-slate-600 bg-slate-900 hover:bg-slate-800' : 'border-neutral-300 bg-white hover:bg-neutral-100'"
-        (click)="close()"
-      >
-        Fermer
-      </button>
+        <!-- <label class="sr-only" for="api-tester-url">URL de la requête</label> -->
+        <input
+          id="api-tester-url"
+          type="text"
+          placeholder="https://… ou coller du texte"
+          class="h-9 min-w-0 flex-1 border-0 bg-transparent px-3 text-xs outline-none"
+          [ngClass]="theme === 'dark'
+            ? 'text-slate-100 placeholder:text-slate-500'
+            : 'text-neutral-900 placeholder:text-neutral-400'"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="URL de la requête"
+        />
+      </div>
+
+      <div class="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          class="h-9 cursor-pointer  bg-blue-600 px-4 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-blue-500 active:bg-blue-700"
+        >
+          Envoyer
+        </button>
+
+        <button
+          type="button"
+          class="h-9 cursor-pointer  border px-3 text-xs font-medium transition-colors"
+          [ngClass]="theme === 'dark'
+            ? 'border-slate-600 bg-slate-900 text-slate-200 hover:bg-slate-800'
+            : 'border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-100'"
+          (click)="close()"
+        >
+          Fermer
+        </button>
+      </div>
     </header>
 
     <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <div class="min-h-0 flex-1 overflow-hidden border-b" [ngClass]="theme === 'dark' ? 'border-slate-700' : 'border-neutral-200'">
+      <div
+        class="flex min-h-0 flex-1 flex-col overflow-hidden border-b"
+        [ngClass]="theme === 'dark' ? 'border-slate-700' : 'border-neutral-200'"
+      >
         <div
           class="flex h-10 shrink-0 items-center gap-1 border-b px-2"
           [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900' : 'border-neutral-200 bg-white'"
         >
-          <span class="mr-2 text-[11px]" [ngClass]="theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'">Docs</span>
           @for (tab of tabs; track tab.id) {
           <button
             type="button"
@@ -73,8 +99,10 @@
           }
         </div>
 
-        <div class="min-h-0 flex-1 overflow-auto p-3">
-          @switch (activeTab()) { @case ('params') {
+        <div class="flex min-h-0 flex-1 flex-col overflow-hidden p-3">
+          @switch (activeTab()) { @case ('docs') {
+          <app-api-tester-docs-item class="block h-full" [theme]="theme" />
+          } @case ('params') {
           <app-api-tester-params-item [theme]="theme" />
           } @case ('authorization') {
           <app-api-tester-authorization-item [theme]="theme" />
@@ -90,17 +118,39 @@
         </div>
       </div>
 
-      <div class="min-h-[240px] max-h-[48%] shrink-0 overflow-hidden">
-        <div
-          class="flex h-10 items-center justify-between border-b px-3 text-[11px] font-semibold"
+      <div
+        role="separator"
+        aria-orientation="horizontal"
+        aria-label="Redimensionner le panneau de réponse"
+        tabindex="0"
+        class="group relative z-10 shrink-0 cursor-row-resize touch-none select-none outline-none focus-visible:ring-2 focus-visible:ring-blue-400/80 focus-visible:ring-offset-1"
+        [ngClass]="theme === 'dark' ? 'ring-offset-slate-950' : 'ring-offset-white'"
+        (pointerdown)="onResponseResizeStart($event)"
+        (keydown)="onResponseResizeKeydown($event)"
+      >
+        <span
+          class="absolute inset-x-3 top-1/2 h-px -translate-y-1/2 rounded-full transition-colors"
+          [ngClass]="theme === 'dark'
+            ? 'bg-slate-600 group-hover:bg-blue-400 group-active:bg-blue-500'
+            : 'bg-neutral-300 group-hover:bg-blue-400 group-active:bg-blue-500'"
+        ></span>
+      </div>
+
+      <div
+        class="flex min-h-0 shrink-0 flex-col overflow-hidden"
+        [style.height.px]="responsePanelHeightPx()"
+        [style.minHeight.px]="120"
+      >
+        <!-- <div
+          class="flex h-10 shrink-0 items-center justify-between ml-3 text-[11px] font-semibold"
           [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900' : 'border-neutral-200 bg-white'"
         >
           <span>Response</span>
-          <span class="font-normal" [ngClass]="theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'">History</span>
-        </div>
-        <div class="h-[calc(100%-2.5rem)] overflow-auto p-3">
+           <span class="font-normal" [ngClass]="theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'">History</span> -->
+        <!-- </div> -->
+        <div class="min-h-0 flex-1 overflow-auto">
           <div
-            class="flex h-full items-center justify-center rounded border text-[12px]"
+            class="flex min-h-full items-center justify-center rounded border text-[12px]"
             [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-950 text-slate-400' : 'border-neutral-200 bg-neutral-50 text-neutral-500'"
           >
             Send request to get a response

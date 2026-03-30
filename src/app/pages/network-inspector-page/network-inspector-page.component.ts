@@ -92,8 +92,9 @@ export class NetworkInspectorPageComponent implements OnInit, OnDestroy {
   @HostListener('document:pointermove', ['$event'])
   onDetailResizeMove(ev: PointerEvent): void {
     if (!this.detailResize) return;
+    // Panneau à droite : tirer la poignée vers la gauche élargit le détail (le bord recule à gauche).
     const w =
-      this.detailResize.startW + (ev.clientX - this.detailResize.startX);
+      this.detailResize.startW - (ev.clientX - this.detailResize.startX);
     this.detailPanelWidth.set(this.clampDetailWidth(w));
   }
 
@@ -107,7 +108,8 @@ export class NetworkInspectorPageComponent implements OnInit, OnDestroy {
     if (ev.key !== 'ArrowLeft' && ev.key !== 'ArrowRight') return;
     ev.preventDefault();
     const step = ev.shiftKey ? 40 : 12;
-    const delta = ev.key === 'ArrowRight' ? step : -step;
+    // Aligné sur la souris : gauche élargit le panneau droit, droite le réduit.
+    const delta = ev.key === 'ArrowLeft' ? step : -step;
     this.detailPanelWidth.update((w) => this.clampDetailWidth(w + delta));
   }
 

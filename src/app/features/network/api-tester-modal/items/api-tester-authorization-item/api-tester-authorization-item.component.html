@@ -1,6 +1,142 @@
-<div
-  class="rounded border p-3 text-[11px]"
-  [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900/60 text-slate-200' : 'border-neutral-200 bg-neutral-50 text-neutral-700'"
->
-  Composant Authorization: choix du schema d authentification et saisie des credentials.
+<div class="h-full min-h-0 overflow-hidden text-[11px]" [ngClass]="theme === 'dark' ? 'text-slate-200' : 'text-neutral-700'">
+  <div class="grid h-full min-h-0 grid-cols-[270px_1fr]">
+    <aside
+      class="h-full overflow-y-auto border-r p-3"
+      [ngClass]="theme === 'dark' ? 'border-slate-700 bg-slate-900/40' : 'border-neutral-200 bg-neutral-50'"
+    >
+      <label class="mb-1 block font-semibold">Auth Type</label>
+      <select
+        class="h-8 w-full rounded border px-2 text-[11px]"
+        [ngClass]="theme === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-neutral-300 bg-white text-neutral-800'"
+        [value]="authType()"
+        (change)="setAuthType($any($event.target).value)"
+      >
+        @for (option of authOptions; track option.value) {
+        <option [value]="option.value">{{ option.label }}</option>
+        }
+      </select>
+
+      @if (authType() !== 'none') {
+      <p class="mt-5 text-[13px] leading-7" [ngClass]="theme === 'dark' ? 'text-slate-300' : 'text-neutral-600'">
+        The authorization header will be automatically generated when you send the request. Learn more about
+        <a
+          class="underline"
+          [href]="authLearnMoreUrl()"
+          target="_blank"
+          rel="noreferrer"
+          [ngClass]="theme === 'dark' ? 'text-slate-200' : 'text-neutral-700'"
+        >
+          {{ authLearnMoreLabel() }}
+        </a>
+        authorization.
+      </p>
+      }
+    </aside>
+
+    <section class="h-full min-h-0 overflow-y-auto p-3">
+      @switch (authType()) { @case ('none') {
+      <div class="flex h-full min-h-[220px] items-center justify-center">
+        <div class="text-center">
+          <div
+            class="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-2xl text-[18px]"
+            [ngClass]="theme === 'dark' ? 'bg-slate-800 text-slate-300' : 'bg-neutral-100 text-neutral-500'"
+          >
+            —
+          </div>
+          <p class="text-[32px] font-semibold" [ngClass]="theme === 'dark' ? 'text-slate-100' : 'text-neutral-800'">No Auth</p>
+          <p class="mt-1 text-[14px]" [ngClass]="theme === 'dark' ? 'text-slate-400' : 'text-neutral-500'">
+            This request does not use any authorization.
+          </p>
+        </div>
+      </div>
+      } @case ('bearer') {
+      <div class="w-full max-w-[760px] space-y-3">
+        <div class="grid grid-cols-[140px_1fr] items-center gap-3">
+          <label class="font-medium">Token</label>
+          <input
+            type="text"
+            placeholder="Token"
+            class="h-8 w-full rounded border px-2 outline-none"
+            [ngClass]="theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-500'
+              : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'"
+            [value]="bearerToken()"
+            (input)="bearerToken.set($any($event.target).value)"
+          />
+        </div>
+      </div>
+      } @case ('basic') {
+      <div class="w-full max-w-[760px] space-y-3">
+        <div class="grid grid-cols-[140px_1fr] items-center gap-3">
+          <label class="font-medium">Username</label>
+          <input
+            type="text"
+            placeholder="Username"
+            class="h-8 w-full rounded border px-2 outline-none"
+            [ngClass]="theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-500'
+              : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'"
+            [value]="basicUsername()"
+            (input)="basicUsername.set($any($event.target).value)"
+          />
+        </div>
+        <div class="grid grid-cols-[140px_1fr] items-center gap-3">
+          <label class="font-medium">Password</label>
+          <input
+            type="password"
+            placeholder="Password"
+            class="h-8 w-full rounded border px-2 outline-none"
+            [ngClass]="theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-500'
+              : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'"
+            [value]="basicPassword()"
+            (input)="basicPassword.set($any($event.target).value)"
+          />
+        </div>
+      </div>
+      } @case ('apiKey') {
+      <div class="w-full max-w-[760px] space-y-3">
+        <div class="grid grid-cols-[140px_1fr] items-center gap-3">
+          <label class="font-medium">Key</label>
+          <input
+            type="text"
+            placeholder="Key"
+            class="h-8 w-full rounded border px-2 outline-none"
+            [ngClass]="theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-500'
+              : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'"
+            [value]="apiKeyName()"
+            (input)="apiKeyName.set($any($event.target).value)"
+          />
+        </div>
+        <div class="grid grid-cols-[140px_1fr] items-center gap-3">
+          <label class="font-medium">Value</label>
+          <input
+            type="text"
+            placeholder="Value"
+            class="h-8 w-full rounded border px-2 outline-none"
+            [ngClass]="theme === 'dark'
+              ? 'border-slate-600 bg-slate-900 text-slate-100 placeholder:text-slate-500'
+              : 'border-neutral-300 bg-white text-neutral-800 placeholder:text-neutral-400'"
+            [value]="apiKeyValue()"
+            (input)="apiKeyValue.set($any($event.target).value)"
+          />
+        </div>
+        <div class="grid grid-cols-[140px_1fr] items-center gap-3">
+          <label class="font-medium">Add to</label>
+          <select
+            class="h-8 w-full rounded border px-2 text-[11px]"
+            [ngClass]="theme === 'dark' ? 'border-slate-600 bg-slate-900 text-slate-100' : 'border-neutral-300 bg-white text-neutral-800'"
+            [value]="apiKeyLocation()"
+            (change)="setApiKeyLocation($any($event.target).value)"
+          >
+            @for (option of apiKeyLocations; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      } }
+    </section>
+  </div>
 </div>
