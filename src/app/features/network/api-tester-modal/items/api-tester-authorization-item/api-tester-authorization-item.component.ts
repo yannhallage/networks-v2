@@ -1,8 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 
 type AuthType = 'none' | 'bearer' | 'basic' | 'apiKey';
 type ApiKeyLocation = 'header' | 'query';
+type ApiTesterAuthorizationSnapshot = {
+  type: AuthType;
+  bearerToken: string;
+  basicUsername: string;
+  basicPassword: string;
+  apiKeyName: string;
+  apiKeyValue: string;
+  apiKeyLocation: ApiKeyLocation;
+};
 
 @Component({
   selector: 'app-api-tester-authorization-item',
@@ -12,6 +21,7 @@ type ApiKeyLocation = 'header' | 'query';
 })
 export class ApiTesterAuthorizationItemComponent {
   @Input({ required: true }) theme: 'light' | 'dark' = 'light';
+  @Output() authChanged = new EventEmitter<ApiTesterAuthorizationSnapshot>();
 
   readonly authType = signal<AuthType>('none');
   readonly bearerToken = signal('');
@@ -36,13 +46,40 @@ export class ApiTesterAuthorizationItemComponent {
   setAuthType(value: string): void {
     if (value === 'none' || value === 'bearer' || value === 'basic' || value === 'apiKey') {
       this.authType.set(value);
+      this.emitChange();
     }
   }
 
   setApiKeyLocation(value: string): void {
     if (value === 'header' || value === 'query') {
       this.apiKeyLocation.set(value);
+      this.emitChange();
     }
+  }
+
+  setBearerToken(value: string): void {
+    this.bearerToken.set(value);
+    this.emitChange();
+  }
+
+  setBasicUsername(value: string): void {
+    this.basicUsername.set(value);
+    this.emitChange();
+  }
+
+  setBasicPassword(value: string): void {
+    this.basicPassword.set(value);
+    this.emitChange();
+  }
+
+  setApiKeyName(value: string): void {
+    this.apiKeyName.set(value);
+    this.emitChange();
+  }
+
+  setApiKeyValue(value: string): void {
+    this.apiKeyValue.set(value);
+    this.emitChange();
   }
 
   authLearnMoreLabel(): string {
@@ -59,5 +96,17 @@ export class ApiTesterAuthorizationItemComponent {
     if (type === 'bearer') return 'https://learning.postman.com/docs/sending-requests/authorization/#bearer-token';
     if (type === 'apiKey') return 'https://learning.postman.com/docs/sending-requests/authorization/#api-key';
     return '';
+  }
+
+  private emitChange(): void {
+    this.authChanged.emit({
+      type: this.authType(),
+      bearerToken: this.bearerToken(),
+      basicUsername: this.basicUsername(),
+      basicPassword: this.basicPassword(),
+      apiKeyName: this.apiKeyName(),
+      apiKeyValue: this.apiKeyValue(),
+      apiKeyLocation: this.apiKeyLocation(),
+    });
   }
 }
