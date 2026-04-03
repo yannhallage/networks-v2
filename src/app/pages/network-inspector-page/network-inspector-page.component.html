@@ -5,6 +5,7 @@
     class="app-panel-surface app-panel-border flex min-h-0 min-w-0 flex-1 basis-0 flex-col overflow-hidden rounded-md border shadow-md"
   >
     <app-network-panel
+      [selectedRequestId]="selected?.id ?? null"
       (rowSelected)="onSelect($event)"
       (compareRequested)="onCompare($event)"
       (sessionImported)="onSessionImported($event)"

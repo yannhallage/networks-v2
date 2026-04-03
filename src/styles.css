@@ -161,6 +161,23 @@
     background-color: #0c1628 !important;
   }
 
+  /* Ligne de requête sélectionnée (liste type DevTools) */
+  .np-data-row.np-row-selected {
+    background-color: #e8e8f5 !important;
+  }
+
+  .np-data-row.np-row-selected:hover {
+    background-color: #ded8f0 !important;
+  }
+
+  html[data-theme='dark'] .np-data-row.np-row-selected {
+    background-color: rgb(139 92 246 / 0.22) !important;
+  }
+
+  html[data-theme='dark'] .np-data-row.np-row-selected:hover {
+    background-color: rgb(139 92 246 / 0.3) !important;
+  }
+
   html[data-theme='dark'] .np-root .text-\[\#1a73e8\] {
     color: #60a5fa !important;
   }
