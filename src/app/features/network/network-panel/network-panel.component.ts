@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   HostListener,
+  Input,
   OnDestroy,
   OnInit,
   Output,
@@ -36,6 +37,9 @@ export class NetworkPanelComponent implements OnInit, OnDestroy {
   readonly requestsSignal = toSignal(this.store.requests$, {
     initialValue: [] as NetworkRequest[],
   });
+
+  /** Synchronisé avec la sélection du parent (panneau détail) pour le surlignage de ligne. */
+  @Input() selectedRequestId: string | null = null;
 
   @Output() rowSelected = new EventEmitter<NetworkRequest>();
   @Output() compareRequested = new EventEmitter<[NetworkRequest, NetworkRequest]>();

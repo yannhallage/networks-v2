@@ -204,6 +204,7 @@
         @for (row of rows(); track row.id) {
         <tr
           class="np-data-row cursor-pointer border-b border-neutral-100/90 transition-colors hover:bg-blue-50/60 even:bg-[#fafbfc]"
+          [class.np-row-selected]="selectedRequestId === row.id"
           (click)="onRowClick(row)">
           <!-- <td class="border-r border-neutral-100/90 px-1 text-center align-middle">
             <input
