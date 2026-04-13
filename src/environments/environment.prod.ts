@@ -4,6 +4,6 @@ export const environment = {
   /**
    * Même hôte que https://server-inspector-production.up.railway.app/ (WSS).
    */
-  wsUrl: 'wss://server-inspector-production.up.railway.app',
+  wsUrl: 'wss://server-inspector.onrender.com',
   reconnectDelayMs: 3000,
 };
