@@ -4,6 +4,6 @@ export const environment = {
   /**
    * Même hôte que https://server-inspector-production.up.railway.app/ (WSS).
    */
-  wsUrl: 'ws://81.0.220.161:4000',
+  wsUrl: 'https://inspector-server.vercel.app',
   reconnectDelayMs: 3000,
 };
