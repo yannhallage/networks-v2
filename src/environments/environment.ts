@@ -2,7 +2,7 @@
 export const environment = {
   production: false,
   /** WebSocket server-inspector en local. */
-  wsUrl: 'https://inspector-server.vercel.app',
+  wsUrl: 'https://server-inspector.onrender.com',
   // wsUrl: 'ws://localhost:4000',
   reconnectDelayMs: 3000,
 };
